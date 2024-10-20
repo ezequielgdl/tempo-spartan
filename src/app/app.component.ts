@@ -15,5 +15,5 @@ import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
   styles: [],
 })
 export class AppComponent {
-  title = 'TempoUI';
+  title = 'Tempo';
 }

@@ -5,4 +5,5 @@ export interface UserInfo {
     phone: string;
     website: string;
     nif: string;
+    iban: string;
   }

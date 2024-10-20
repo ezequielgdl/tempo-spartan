@@ -7,13 +7,9 @@ import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
   standalone: true,
   imports: [RouterOutlet, HlmButtonModule],
   template: `
-    <h1>Welcome to {{title}}!</h1>
-
     <router-outlet />
-    <button hlmBtn>Click me</button>
   `,
   styles: [],
 })
 export class AppComponent {
-  title = 'Tempo';
 }

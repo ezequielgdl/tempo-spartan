@@ -8,52 +8,49 @@ import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [HlmFormFieldModule, HlmInputDirective, HlmButtonModule, ReactiveFormsModule],
-  host: {
-    class: 'w-full'
-  },
   template: `
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <hlm-form-field>
-      <input class="w-full" hlmInput type="email" placeholder="Email" formControlName="email"/>
-      @if (loginForm.get('email')?.invalid) {
+      <input class="w-80" hlmInput type="email" placeholder="Email" formControlName="email"/>
+      @if (registerForm.get('email')?.invalid) {
         <hlm-error>Tu email no es válido</hlm-error>
       }
-      @if (loginForm.get('email')?.errors?.['required']) {
+      @if (registerForm.get('email')?.errors?.['required']) {
         <hlm-error>Tu email es requerido</hlm-error>
       }
     </hlm-form-field>
     <hlm-form-field>
-      <input class="w-full" hlmInput type="password" placeholder="Contraseña" formControlName="password"/>
-      @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
+      <input class="w-80" hlmInput type="password" placeholder="Contraseña" formControlName="password"/>
+      @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']) {
         <hlm-error>Tu contraseña es requerida</hlm-error>
       }
     </hlm-form-field>
     @if (errorMessage) {
       <hlm-error>{{ errorMessage }}</hlm-error>
     }
-    <button hlmBtn type="submit" [disabled]="loginForm.invalid">Login</button>
+    <button hlmBtn type="submit" [disabled]="registerForm.invalid">Signup</button>
   </form>
   `
 })
-export class LoginComponent {
+export class RegisterComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
   errorMessage = '';
 
-  loginForm = new FormGroup({
+  registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
 
   onSubmit() {
-    if (this.loginForm.valid) {
+    if (this.registerForm.valid) {
       try {
-        const { email, password } = this.loginForm.value;
+        const { email, password } = this.registerForm.value;
         if (email && password) {
-          this.authService.login(email, password).subscribe((next) => {
+          this.authService.signUp(email, password).subscribe((next) => {
             if (next) {
               this.router.navigate(['/']);
             } else {

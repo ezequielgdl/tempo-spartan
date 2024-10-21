@@ -23,6 +23,7 @@ import {
   HlmMenuShortcutComponent,
   HlmSubMenuComponent,
 } from '@spartan-ng/ui-menu-helm';
+import { UserInfo } from '../../../features/user/interface';
 
 @Component({
   selector: 'app-navbar',
@@ -57,8 +58,9 @@ import {
   },
   template: `
   <div>Tempo</div>
-  <div>
-    <div class="flex w-full items-center justify-center">
+  @if (currentUser) {
+    <div>
+      <div class="flex w-full items-center justify-center">
       <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">Menu</button>
     </div>
     <ng-template #menu>
@@ -101,10 +103,19 @@ import {
       </hlm-menu>
       </ng-template>
     </div>
+  }
   `,
 })
 export class NavbarComponent {
   constructor(private authService: AuthService) {}
+
+  currentUser: UserInfo | null = null;
+
+  ngOnInit() {
+    this.authService.getCurrentUser().subscribe((user) => {
+      this.currentUser = user as UserInfo | null;
+    });
+  }
 
   logout() {
     this.authService.logout();

@@ -14,6 +14,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/user/user/user.component').then(m => m.UserComponent),
         canActivate: [AuthGuard]
     },
+    {
+        path: 'clients',
+        loadComponent: () => import('./features/clients/clients/clients.component').then(m => m.ClientsComponent),
+        canActivate: [AuthGuard]
+    },
     // Default route
     { path: '', redirectTo: '/enter', pathMatch: 'full' },
     // Wildcard route

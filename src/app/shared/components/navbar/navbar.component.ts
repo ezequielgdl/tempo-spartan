@@ -1,5 +1,6 @@
 
-import { Component, Inject } from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { provideIcons } from '@ng-icons/core';
@@ -32,7 +33,6 @@ import { UserInfo } from '../../../features/user/interface';
   standalone: true,
   imports: [
     BrnMenuTriggerDirective,
-
     HlmMenuComponent,
     HlmSubMenuComponent,
     HlmMenuItemDirective,
@@ -42,9 +42,9 @@ import { UserInfo } from '../../../features/user/interface';
     HlmMenuSeparatorComponent,
     HlmMenuItemIconDirective,
     HlmMenuGroupComponent,
-
     HlmButtonDirective,
-    HlmIconComponent
+    HlmIconComponent,
+    RouterLink
   ],
   providers: [
     provideIcons({
@@ -64,7 +64,6 @@ import { UserInfo } from '../../../features/user/interface';
   @if (currentUser) {
     <div>
       <div class="flex w-full items-center justify-center">
-
       <button hlmBtn variant="ghost" align="end" [brnMenuTriggerFor]="menu">Menu</button>
     </div>
     <ng-template #menu>
@@ -78,7 +77,7 @@ import { UserInfo } from '../../../features/user/interface';
             <hlm-menu-shortcut>⇧⌘P</hlm-menu-shortcut>
           </button>
 
-          <button hlmMenuItem routerLink="/user">
+          <button hlmMenuItem routerLink="/clients">
             <hlm-icon name="lucideLayers" hlmMenuIcon />
             <span>Clients</span>
             <hlm-menu-shortcut>⌘B</hlm-menu-shortcut>

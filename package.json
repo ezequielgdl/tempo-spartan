@@ -29,6 +29,7 @@
     "@spartan-ng/ui-menu-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-separator-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-switch-brain": "0.0.1-alpha.356",
+    "@spartan-ng/ui-table-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-tabs-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-toggle-brain": "0.0.1-alpha.356",
     "@supabase/supabase-js": "^2.45.6",

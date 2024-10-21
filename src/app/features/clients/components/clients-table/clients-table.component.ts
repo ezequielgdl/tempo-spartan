@@ -42,8 +42,7 @@ import { lucideEdit } from '@ng-icons/lucide';
         </hlm-trow>
       }
     </hlm-table>
-  `,
-  styles: ``
+  `
 })
 export class ClientsTableComponent {
   @Input() clients: Client[] = [];  

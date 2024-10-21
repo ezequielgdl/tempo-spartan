@@ -20,14 +20,12 @@ export class AuthGuard implements CanActivate {
       switchMap(user => {
         const isLoggedIn = !!user;
         if (!isLoggedIn) {
-          if (state.url === '/signup') {
+          if (state.url === '/enter') {
             return of(true);
           }
-          if (state.url !== '/login') {
-            this.router.navigate(['/login']);
-            return of(false);
-          }
-        } else if (state.url === '/login' || state.url === '/signup') {
+          this.router.navigate(['/enter']);
+          return of(false);
+        } else if (state.url === '/enter') {
           this.router.navigate(['/user']);
           return of(false);
         }

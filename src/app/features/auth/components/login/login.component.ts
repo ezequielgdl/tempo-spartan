@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HlmFormFieldModule } from '@spartan-ng/ui-formfield-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthService } from '../../../../../core/auth/services/auth.service';
-import { Router } from '@angular/router';
+
+import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
   selector: 'app-login',

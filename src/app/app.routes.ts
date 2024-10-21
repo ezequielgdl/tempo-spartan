@@ -4,8 +4,8 @@ import { AuthGuard } from './core/auth/guards/auth.guard';
 export const routes: Routes = [
     // Public routes
     {
-        path: 'login',
-        loadComponent: () => import('./features/auth/components/login/login/login.component').then(m => m.LoginComponent),
+        path: 'enter',
+        loadComponent: () => import('./features/auth/components/sign-in-tabs/sign-in-tabs.component').then(m => m.SignInTabsComponent),
         canActivate: [AuthGuard]
     },
     // Private routes
@@ -15,7 +15,7 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     // Default route
-    { path: '', redirectTo: '/user', pathMatch: 'full' },
+    { path: '', redirectTo: '/enter', pathMatch: 'full' },
     // Wildcard route
     { path: '**', redirectTo: '/user' },
 ];

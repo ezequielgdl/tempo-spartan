@@ -23,11 +23,10 @@ import { hlmMuted, hlmSmall } from '@spartan-ng/ui-typography-helm';
     class: 'block max-w-lg mx-auto w-full p-4'
   },
   template: `
-
 <section hlmCard>
   <div hlmCardHeader>
     <h3 hlmCardTitle>Hi, {{ name() }}</h3>
-    <p hlmCardDescription>Your profile</p>
+    <p hlmCardDescription>Your profile details</p>
   </div>
   <div hlmCardContent class="flex flex-col gap-8 mb-4">
       <div>

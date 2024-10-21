@@ -2,7 +2,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { BrnDialogContentDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
+import { BrnDialogContentDirective, BrnDialogCloseDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
 import {
   HlmDialogComponent,
   HlmDialogContentComponent,
@@ -21,6 +21,7 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
     ReactiveFormsModule,
     BrnDialogTriggerDirective,
     BrnDialogContentDirective,
+    BrnDialogCloseDirective,
 
     HlmDialogComponent,
     HlmDialogContentComponent,
@@ -51,7 +52,7 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
             }
           </div>
           <hlm-dialog-footer>
-            <button hlmBtn type="submit">{{ saveButtonText }}</button>
+            <button hlmBtn type="submit" brnDialogClose>{{ saveButtonText }}</button>
           </hlm-dialog-footer>
         </form>
       </hlm-dialog-content>

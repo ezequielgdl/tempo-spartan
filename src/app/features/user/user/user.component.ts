@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
 import { UserInfo } from '../interface'
@@ -26,15 +26,35 @@ import { hlmMuted, hlmSmall } from '@spartan-ng/ui-typography-helm';
 
 <section hlmCard>
   <div hlmCardHeader>
-    <h3 hlmCardTitle>Hi, {{ user()?.name }}</h3>
+    <h3 hlmCardTitle>Hi, {{ name() }}</h3>
     <p hlmCardDescription>Your profile</p>
   </div>
-  <div hlmCardContent>
-      <p class="${hlmSmall} my-4">NIF: {{ user()?.nif }}</p>
-      <p class="${hlmSmall} my-4">Address: {{ user()?.address }}</p>
-      <p class="${hlmSmall} my-4">Phone: {{ user()?.phone }}</p>
-      <p class="${hlmSmall} my-4">IBAN: {{ user()?.iban }}</p>
-      <p class="${hlmSmall} my-4">Website: {{ user()?.website }}</p>
+  <div hlmCardContent class="flex flex-col gap-8 mb-4">
+      <div>
+        <p class="${hlmMuted}">NIF</p>
+        <div class="w-full h-px bg-border my-1"></div>
+        <p class="">{{ user()?.nif }}</p>
+      </div>
+      <div>
+        <p class="${hlmMuted}">Address</p>
+        <div class="w-full h-px bg-border my-1"></div>
+        <p class="">{{ user()?.address }}</p>
+      </div>
+      <div>
+        <p class="${hlmMuted}">Phone</p>
+        <div class="w-full h-px bg-border my-1"></div>
+        <p class="">{{ user()?.phone }}</p>
+      </div>
+      <div>
+        <p class="${hlmMuted}">IBAN</p>
+        <div class="w-full h-px bg-border my-1"></div>
+        <p class="">{{ user()?.iban }}</p>
+      </div>
+      <div>
+        <p class="${hlmMuted}">Website</p>
+        <div class="w-full h-px bg-border my-1"></div>
+        <p class="">{{ user()?.website }}</p>
+      </div>
 </div>
   <p hlmCardFooter>
   @defer (when user()) {  
@@ -50,6 +70,7 @@ import { hlmMuted, hlmSmall } from '@spartan-ng/ui-typography-helm';
 export class UserComponent {
 
 user = signal<UserInfo | null>(null);
+name = computed(() => this.user()?.name.split(' ')[0]);
 
 constructor(private userService: UserService) {}
 

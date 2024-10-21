@@ -13,7 +13,7 @@ import {
   HlmCardHeaderDirective,
   HlmCardTitleDirective,
 } from '@spartan-ng/ui-card-helm';
-import { hlmMuted, hlmSmall } from '@spartan-ng/ui-typography-helm';
+import { hlmMuted } from '@spartan-ng/ui-typography-helm';
 
 @Component({
   selector: 'app-user',

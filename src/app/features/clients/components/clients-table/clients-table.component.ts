@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Client } from '../../interface';
+import { EditClientsComponent } from '../edit-clients/edit-clients.component';
 import {
   HlmCaptionComponent,
   HlmTableComponent,
@@ -22,7 +23,7 @@ import { lucideEdit } from '@ng-icons/lucide';
   host: {
     class: 'w-full'
   },
-  imports: [HlmCaptionComponent, HlmTableComponent, HlmTdComponent, HlmThComponent, HlmTrowComponent, HlmIconComponent],
+  imports: [HlmCaptionComponent, HlmTableComponent, HlmTdComponent, HlmThComponent, HlmTrowComponent, HlmIconComponent, EditClientsComponent],
   template: `
     <hlm-table class="w-full">
       <hlm-caption>A list of your clients.</hlm-caption>
@@ -34,9 +35,7 @@ import { lucideEdit } from '@ng-icons/lucide';
         <hlm-trow>
           <hlm-td class="w-1/2">{{ client.name }}</hlm-td>
           <hlm-td class="w-1/2 flex justify-end">
-            <button hlmBtn variant="ghost">
-              <hlm-icon name="lucideEdit" hlmBtnIcon />
-            </button>
+              <app-edit-clients [client]="client" />
           </hlm-td>
         </hlm-trow>
       }

@@ -13,8 +13,11 @@ import {
   selector: 'app-sign-in-tabs',
   standalone: true,
   imports: [HlmTabsComponent, HlmTabsContentDirective, HlmTabsListComponent, HlmTabsTriggerDirective, LoginComponent, RegisterComponent],
+  host: {
+    class: 'block max-w-lg mx-auto w-full p-4'
+  },
   template: `
-    <hlm-tabs tab='login' class='block max-w-3xl mx-auto w-full p-4'>
+    <hlm-tabs tab='login'>
       <hlm-tabs-list class='w-full grid grid-cols-2' aria-label='Login or Signup'>
         <button hlmTabsTrigger='login'>Login</button>
         <button hlmTabsTrigger='register'>Signup</button>

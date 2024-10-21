@@ -51,6 +51,12 @@
       ],
       "@spartan-ng/ui-typography-helm": [
         "./components/ui-typography-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-switch-helm": [
+        "./components/ui-switch-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-toggle-helm": [
+        "./components/ui-toggle-helm/src/index.ts"
       ]
     }
   },

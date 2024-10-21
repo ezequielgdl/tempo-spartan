@@ -1,13 +1,15 @@
 
 import { Component, Inject } from '@angular/core';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { ThemeService } from '../../../core/theme/theme.service';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideLayers,
   lucideLogOut,
   lucideUser,
   lucideFile,
-  lucideBarChart
+  lucideBarChart,
+  lucideSunMoon
 } from '@ng-icons/lucide';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
@@ -42,7 +44,7 @@ import { UserInfo } from '../../../features/user/interface';
     HlmMenuGroupComponent,
 
     HlmButtonDirective,
-    HlmIconComponent,
+    HlmIconComponent
   ],
   providers: [
     provideIcons({
@@ -50,7 +52,8 @@ import { UserInfo } from '../../../features/user/interface';
       lucideLayers,
       lucideLogOut,
       lucideFile,
-      lucideBarChart
+      lucideBarChart,
+      lucideSunMoon
     }),
   ],
   host: {
@@ -61,6 +64,7 @@ import { UserInfo } from '../../../features/user/interface';
   @if (currentUser) {
     <div>
       <div class="flex w-full items-center justify-center">
+
       <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">Menu</button>
     </div>
     <ng-template #menu>
@@ -95,6 +99,14 @@ import { UserInfo } from '../../../features/user/interface';
 
         <hlm-menu-separator />
 
+        <button hlmMenuItem (click)="toggleTheme()">
+            <hlm-icon name="lucideSunMoon" hlmMenuIcon />
+            <span>Change Theme</span>
+            <hlm-menu-shortcut>⌘T</hlm-menu-shortcut>
+          </button>
+
+        <hlm-menu-separator />
+
         <button hlmMenuItem (click)="logout()">
           <hlm-icon name="lucideLogOut" hlmMenuIcon />
           <span>Logout</span>
@@ -107,7 +119,7 @@ import { UserInfo } from '../../../features/user/interface';
   `,
 })
 export class NavbarComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private themeService: ThemeService) {}
 
   currentUser: UserInfo | null = null;
 
@@ -119,5 +131,9 @@ export class NavbarComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  toggleTheme() {
+    this.themeService.toggleDarkMode();
   }
 }

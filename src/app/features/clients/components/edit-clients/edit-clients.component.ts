@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { Client } from '../../interface';
 import { ClientService } from '../../services/clients.service';
@@ -8,44 +8,48 @@ import { lucideEdit } from '@ng-icons/lucide';
 @Component({
   selector: 'app-edit-clients',
   standalone: true,
-  providers: [provideIcons({ lucideEdit })],
   imports: [EditDialogComponent],
+  providers: [provideIcons({ lucideEdit })],
   template: `
     <app-edit-dialog 
-      [buttonText]="'Edit'"
-      [title]="'Edit Client'"
-      [description]="'Edit the client details here.'"
+      buttonText="Edit"
+      title="Edit Client"
+      description="Edit the client details here."
       [fields]="fields"
-      [saveButtonText]="'Save Changes'"
+      saveButtonText="Save Changes"
       (save)="onSave($event)"
-    /> 
-  `,
-  styles: ``
+    />
+  `
 })
-export class EditClientsComponent {
+export class EditClientsComponent implements OnInit {
   @Input() client!: Client;
   fields: Array<{id: string, label: string, value: string}> = [];
 
   constructor(private clientService: ClientService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initializeFields();
   }
 
-  initializeFields() {
+  private initializeFields(): void {
     this.fields = [
-      {id: 'name', label: 'Name', value: this.client.name ?? ''},
-      {id: 'phone', label: 'Phone', value: this.client.phone ?? ''},
-      {id: 'email', label: 'Email', value: this.client.email ?? ''},
-      {id: 'address', label: 'Address', value: this.client.address ?? ''},
-      {id: 'CIF', label: 'CIF', value: this.client.CIF ?? ''},
-      {id: 'pricePerHour', label: 'Price per hour', value: this.client.pricePerHour?.toString() ?? ''},
+      { id: 'name', label: 'Name', value: this.client.name ?? '' },
+      { id: 'phone', label: 'Phone', value: this.client.phone ?? '' },
+      { id: 'email', label: 'Email', value: this.client.email ?? '' },
+      { id: 'address', label: 'Address', value: this.client.address ?? '' },
+      { id: 'CIF', label: 'CIF', value: this.client.CIF ?? '' },
+      { id: 'pricePerHour', label: 'Price per hour', value: this.client.pricePerHour?.toString() ?? '' },
     ];
   }
 
-  onSave(data: {[key: string]: string}) {
-    this.clientService.updateClient(this.client.id, data).subscribe((client) => {
-      this.client = client!;
+  onSave(data: {[key: string]: string}): void {
+    this.clientService.updateClient(this.client.id, data).subscribe({
+      next: (updatedClient) => {
+        if (updatedClient) {
+          this.client = updatedClient;
+        }
+      },
+      error: (error) => console.error('Error updating client:', error)
     });
   }
 }

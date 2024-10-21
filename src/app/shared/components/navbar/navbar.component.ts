@@ -65,7 +65,7 @@ import { UserInfo } from '../../../features/user/interface';
     <div>
       <div class="flex w-full items-center justify-center">
 
-      <button hlmBtn variant="outline" align="end" [brnMenuTriggerFor]="menu">Menu</button>
+      <button hlmBtn variant="ghost" align="end" [brnMenuTriggerFor]="menu">Menu</button>
     </div>
     <ng-template #menu>
       <hlm-menu class="w-56">

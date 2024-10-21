@@ -25,7 +25,7 @@ export class EditUserComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   @Input() user!: UserInfo;
-  fields: Array<{id: string, label: string, value: string}> = [];
+  fields: Array<{id: string, label: string, value: string | number}> = [];
 
   ngOnInit() {
     this.initializeFields();
@@ -44,7 +44,7 @@ export class EditUserComponent implements OnInit {
     }
   }
 
-  onSave(data: {[key: string]: string}) {
+  onSave(data: {[key: string]: string | number}) {
     this.userService.updateUser(this.user.id, data).subscribe((user) => {
       this.user = user!;
     });

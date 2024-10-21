@@ -1,6 +1,5 @@
-
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { BrnDialogContentDirective, BrnDialogCloseDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
 import {
@@ -52,7 +51,7 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
             }
           </div>
           <hlm-dialog-footer>
-            <button hlmBtn type="submit" brnDialogClose>{{ saveButtonText }}</button>
+            <button hlmBtn type="submit" brnDialogClose [disabled]="form.invalid">{{ saveButtonText }}</button>
           </hlm-dialog-footer>
         </form>
       </hlm-dialog-content>
@@ -63,18 +62,23 @@ export class EditDialogComponent implements OnInit {
   @Input() buttonText: string = 'Edit Profile';
   @Input() title: string = 'Edit profile';
   @Input() description: string = 'Make changes to your profile here. Click save when you\'re done.';
-  @Input() fields: Array<{id: string, label: string, value: string}> = [{id: 'name', label: 'Name', value: ''}];
+  @Input() fields: Array<{
+    id: string, 
+    label: string, 
+    value: string | number,
+    validators?: ValidatorFn | ValidatorFn[]
+  }> = [{id: 'name', label: 'Name', value: ''}];
   @Input() saveButtonText: string = 'Save changes';
-  @Output() save = new EventEmitter<{[key: string]: string}>();
+  @Output() save = new EventEmitter<{[key: string]: string | number}>();
 
   form!: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    const formControls: {[key: string]: string} = {};
+    const formControls: {[key: string]: any} = {};
     this.fields.forEach(field => {
-      formControls[field.id] = field.value;
+      formControls[field.id] = [field.value, field.validators];
     });
     this.form = this.fb.group(formControls);
   }
@@ -85,4 +89,3 @@ export class EditDialogComponent implements OnInit {
     }
   }
 }
-

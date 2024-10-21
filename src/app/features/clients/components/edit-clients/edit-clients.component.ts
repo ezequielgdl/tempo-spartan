@@ -23,7 +23,7 @@ import { lucideEdit } from '@ng-icons/lucide';
 })
 export class EditClientsComponent implements OnInit {
   @Input() client!: Client;
-  fields: Array<{id: string, label: string, value: string}> = [];
+  fields: Array<{id: string, label: string, value: string | number}> = [];
 
   constructor(private clientService: ClientService) {}
 
@@ -42,7 +42,7 @@ export class EditClientsComponent implements OnInit {
     ];
   }
 
-  onSave(data: {[key: string]: string}): void {
+  onSave(data: {[key: string]: string | number}): void {
     this.clientService.updateClient(this.client.id, data).subscribe({
       next: (updatedClient) => {
         if (updatedClient) {

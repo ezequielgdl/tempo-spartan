@@ -41,7 +41,7 @@ describe('authGuard', () => {
     });
   });
 
-  fit('should allow access to protected route if user is authenticated', () => {
+  it('should allow access to protected route if user is authenticated', () => {
     const mockUser: User = {
       id: '1',
       app_metadata: {},

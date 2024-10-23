@@ -4,6 +4,7 @@ import { map, shareReplay, switchMap, tap, catchError } from 'rxjs/operators';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseService } from '../../../core/auth/services/supabase.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
 import { Client } from '../interface';
 
 @Injectable({
@@ -14,7 +15,8 @@ export class ClientService {
   private clientsSubject = new BehaviorSubject<Client[] | null>(null);
   private clients$: Observable<Client[]>;
 
-  constructor(private supabaseService: SupabaseService, private authService: AuthService) {
+
+  constructor(private supabaseService: SupabaseService, private authService: AuthService, private errorHandler: ErrorHandlerService) {
     this.supabase = this.supabaseService.getClient();
 
     this.clients$ = this.clientsSubject.pipe(
@@ -30,7 +32,7 @@ export class ClientService {
   getClientById(id: string): Observable<Client | null> {
     return this.clients$.pipe(
       map(clients => clients.find(client => client.id === id) ?? null),
-      catchError(() => of(null))
+      catchError(this.errorHandler.handleError<Client | null>('getClientById', null))
     );
   }
 
@@ -40,10 +42,7 @@ export class ClientService {
         if (error) throw error;
         return data as Client;
       }),
-      catchError((error) => {
-        console.error('Error fetching client:', error);
-        return of(null);
-      })
+      catchError(this.errorHandler.handleError<Client | null>('getClient', null))
     );
   }
 
@@ -68,10 +67,7 @@ export class ClientService {
         const currentClients = this.clientsSubject.value;
         this.clientsSubject.next([...(currentClients || []), newClient]);
       }),
-      catchError((error) => {
-        console.error('Error creating client:', error);
-        return of(null);
-      })
+      catchError(this.errorHandler.handleError<Client | null>('createClient', null))
     );
   }
 
@@ -96,10 +92,7 @@ export class ClientService {
           this.clientsSubject.next(updatedClients);
         }
       }),
-      catchError((error) => {
-        console.error('Error updating client:', error);
-        return of(null);
-      })
+      catchError(this.errorHandler.handleError<Client | null>('updateClient', null))
     );
   }
 
@@ -123,10 +116,7 @@ export class ClientService {
           this.clientsSubject.next(updatedClients);
         }
       }),
-      catchError((error) => {
-        console.error('Error deleting client:', error);
-        throw error; 
-      })
+      catchError(this.errorHandler.handleError<void>('deleteClient', undefined))
     );
   }
 
@@ -143,8 +133,8 @@ export class ClientService {
         if (error) throw error;
         return data as Client[];
       }),
-      tap(clients => this.clientsSubject.next(clients))
+      tap(clients => this.clientsSubject.next(clients)),
+      catchError(this.errorHandler.handleError<Client[]>('fetchClients', []))
     );
   }
 }
-

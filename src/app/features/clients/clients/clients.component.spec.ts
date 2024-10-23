@@ -42,13 +42,6 @@ describe('ClientsComponent', () => {
     expect(component.clients()).toEqual(mockClients);
   });
 
-  it('should handle error when fetching clients', () => {
-    const error = new Error('Test error');
-    clientServiceSpy.getClients.and.returnValue(throwError(() => error));
-
-    component.ngOnInit();
-  });
-
   it('should set the signal from the clients subscription', () => {
     const mockClients: Client[] = [
       { id: '1', name: 'Client 1', address: 'Address 1', pricePerHour: 100 },

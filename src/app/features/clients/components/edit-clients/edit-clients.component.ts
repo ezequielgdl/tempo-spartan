@@ -32,14 +32,18 @@ export class EditClientsComponent implements OnInit {
   }
 
   private initializeFields(): void {
-    this.fields = [
-      { id: 'name', label: 'Name', value: this.client.name ?? '' },
-      { id: 'phone', label: 'Phone', value: this.client.phone ?? '' },
-      { id: 'email', label: 'Email', value: this.client.email ?? '' },
-      { id: 'address', label: 'Address', value: this.client.address ?? '' },
-      { id: 'CIF', label: 'CIF', value: this.client.CIF ?? '' },
-      { id: 'pricePerHour', label: 'Price per hour', value: this.client.pricePerHour?.toString() ?? '' },
-    ];
+    if (this.client) {
+      this.fields = [
+        { id: 'name', label: 'Name', value: this.client.name ?? '' },
+        { id: 'phone', label: 'Phone', value: this.client.phone ?? '' },
+        { id: 'email', label: 'Email', value: this.client.email ?? '' },
+        { id: 'address', label: 'Address', value: this.client.address ?? '' },
+        { id: 'CIF', label: 'CIF', value: this.client.CIF ?? '' },
+        { id: 'pricePerHour', label: 'Price per hour', value: this.client.pricePerHour?.toString() ?? '' },
+      ];
+    } else {
+      console.error('Client object is undefined');
+    }
   }
 
   onSave(data: {[key: string]: string | number}): void {

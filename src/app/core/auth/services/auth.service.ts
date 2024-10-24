@@ -21,7 +21,7 @@ export class AuthService {
 
   private initializeAuthState(): void {
     from(this.supabase.auth.getSession()).pipe(
-      map(({ data }) => data.session?.user ?? null),
+      map(({ data }) => data?.session?.user ?? null),
       catchError(() => of(null))
     ).subscribe(user => this.currentUserSubject.next(user));
 

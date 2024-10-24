@@ -15,7 +15,6 @@ export class ClientService {
   private clientsSubject = new BehaviorSubject<Client[] | null>(null);
   private clients$: Observable<Client[]>;
 
-
   constructor(private supabaseService: SupabaseService, private authService: AuthService, private errorHandler: ErrorHandlerService) {
     this.supabase = this.supabaseService.getClient();
 
@@ -121,20 +120,29 @@ export class ClientService {
   }
 
   private fetchClients(): Observable<Client[]> {
-    return from(this.authService.getCurrentUser()).pipe(
-      switchMap(user => {
-        if (!user) throw new Error('No authenticated user');
+    return from(this.supabase.auth.getUser()).pipe(
+      switchMap(({ data: { user } }) => {
+        if (!user) return of(null);
         return this.supabase
           .from('clients')
           .select('*')
           .eq('user_id', user.id);
       }),
-      map(({ data, error }) => {
+      map((response) => {
+        if (!response) throw new Error('No response');
+        const { data, error } = response;
         if (error) throw error;
         return data as Client[];
       }),
-      tap(clients => this.clientsSubject.next(clients)),
-      catchError(this.errorHandler.handleError<Client[]>('fetchClients', []))
+      tap(clients => {
+        if (clients && !this.clientsSubject.value) {
+          this.clientsSubject.next(clients);
+        }
+      }),
+      catchError(error => {
+        console.error('Error fetching clients:', error);
+        return of([]);
+      })
     );
   }
 }

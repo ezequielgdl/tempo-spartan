@@ -60,36 +60,36 @@ import { UserInfo } from '../../../features/user/interface';
     class: 'flex w-full items-center justify-between p-4'
   },
   template: `
-  <div>Tempo</div>
+  <div id="tempo-logo" aria-label="Tempo logo">Tempo</div>
   @if (currentUser) {
     <div>
       <div class="flex w-full items-center justify-center">
-      <button hlmBtn variant="ghost" align="end" [brnMenuTriggerFor]="menu">Menu</button>
+      <button id="menu-trigger" hlmBtn variant="ghost" align="end" [brnMenuTriggerFor]="menu" aria-label="Open menu">Menu</button>
     </div>
     <ng-template #menu>
-      <hlm-menu class="w-56">
-        <hlm-menu-label>Tempo</hlm-menu-label>
+      <hlm-menu class="w-56" role="menu" aria-label="Navigation menu">
+        <hlm-menu-label id="menu-label">Tempo</hlm-menu-label>
         <hlm-menu-separator />
         <hlm-menu-group>
-          <button hlmMenuItem routerLink="/user">
+          <button id="profile-menu-item" hlmMenuItem routerLink="/user" role="menuitem" aria-label="Go to profile">
             <hlm-icon name="lucideUser" hlmMenuIcon />
             <span>Profile</span>
             <hlm-menu-shortcut>⇧⌘P</hlm-menu-shortcut>
           </button>
 
-          <button hlmMenuItem routerLink="/clients">
+          <button id="clients-menu-item" hlmMenuItem routerLink="/clients" role="menuitem" aria-label="Go to clients">
             <hlm-icon name="lucideLayers" hlmMenuIcon />
             <span>Clients</span>
             <hlm-menu-shortcut>⌘B</hlm-menu-shortcut>
           </button>
 
-          <button hlmMenuItem routerLink="/user">
+          <button id="analytics-menu-item" hlmMenuItem routerLink="/user" role="menuitem" aria-label="Go to analytics">
             <hlm-icon name="lucideBarChart" hlmMenuIcon />
             <span>Analytics</span>
             <hlm-menu-shortcut>⌘S</hlm-menu-shortcut>
           </button>
 
-          <button hlmMenuItem routerLink="/user">
+          <button id="invoices-menu-item" hlmMenuItem routerLink="/user" role="menuitem" aria-label="Go to invoices">
             <hlm-icon name="lucideFile" hlmMenuIcon />
             <span>Invoices</span>
             <hlm-menu-shortcut>⌘K</hlm-menu-shortcut>
@@ -98,7 +98,7 @@ import { UserInfo } from '../../../features/user/interface';
 
         <hlm-menu-separator />
 
-        <button hlmMenuItem (click)="toggleTheme()">
+        <button id="theme-toggle-menu-item" hlmMenuItem (click)="toggleTheme()" role="menuitem" aria-label="Toggle theme">
             <hlm-icon name="lucideSunMoon" hlmMenuIcon />
             <span>Change Theme</span>
             <hlm-menu-shortcut>⌘T</hlm-menu-shortcut>
@@ -106,7 +106,7 @@ import { UserInfo } from '../../../features/user/interface';
 
         <hlm-menu-separator />
 
-        <button hlmMenuItem (click)="logout()">
+        <button id="logout-menu-item" hlmMenuItem (click)="logout()" role="menuitem" aria-label="Logout">
           <hlm-icon name="lucideLogOut" hlmMenuIcon />
           <span>Logout</span>
           <hlm-menu-shortcut>⇧⌘Q</hlm-menu-shortcut>

@@ -35,23 +35,23 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
   ],
   template: `
     <hlm-dialog>
-      <button id="edit-profile" brnDialogTrigger hlmBtn>{{ buttonText }}</button>
+      <button id="edit-profile-button" brnDialogTrigger hlmBtn>{{ buttonText }}</button>
       <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
         <hlm-dialog-header>
-          <h3 hlmDialogTitle>{{ title }}</h3>
-          <p hlmDialogDescription>{{ description }}</p>
+          <h3 id="dialog-title" hlmDialogTitle>{{ title }}</h3>
+          <p id="dialog-description" hlmDialogDescription>{{ description }}</p>
         </hlm-dialog-header>
         <form [formGroup]="form" (ngSubmit)="onSave()">
           <div class="py-4 grid gap-4">
             @for (field of fields; track field.id) {
               <div class="items-center grid grid-cols-4 gap-4">
-                <label hlmLabel [for]="field.id" class="text-right">{{ field.label }}</label>
-                <input hlmInput [id]="field.id" [formControlName]="field.id" class="col-span-3" />
+                <label [id]="'label-' + field.id" hlmLabel [for]="field.id" class="text-right">{{ field.label }}</label>
+                <input [id]="'input-' + field.id" hlmInput [formControlName]="field.id" class="col-span-3" />
               </div>
             }
           </div>
           <hlm-dialog-footer>
-            <button hlmBtn type="submit" brnDialogClose [disabled]="form.invalid">{{ saveButtonText }}</button>
+            <button id="save-button" hlmBtn type="submit" brnDialogClose [disabled]="form.invalid">{{ saveButtonText }}</button>
           </hlm-dialog-footer>
         </form>
       </hlm-dialog-content>

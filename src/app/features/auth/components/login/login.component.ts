@@ -24,38 +24,38 @@ import { AuthService } from '../../../../core/auth/services/auth.service';
     class: 'w-full'
   },
   template: `
-  <section hlmCard>
+  <section hlmCard id="login-card">
     <div hlmCardHeader>
-      <h3 hlmCardTitle>Login</h3>
-      <p hlmCardDescription>Enter your email and password to log in.</p>
+      <h3 hlmCardTitle id="login-title">Login</h3>
+      <p hlmCardDescription id="login-description">Enter your email and password to log in.</p>
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" id="login-form">
       <p hlmCardContent>
         <hlm-form-field>
-          <input class="w-full my-4" hlmInput type="email" placeholder="Email" formControlName="email"/>
+          <input class="w-full my-4" hlmInput type="email" placeholder="Email" formControlName="email" id="email-input" aria-label="Email"/>
           @if (loginForm.get('email')?.invalid) {
-            <hlm-error>Your email is not valid</hlm-error>
+            <hlm-error id="email-invalid-error">Your email is not valid</hlm-error>
           }
           @if (loginForm.get('email')?.errors?.['required']) {
-            <hlm-error>Your email is required</hlm-error>
+            <hlm-error id="email-required-error">Your email is required</hlm-error>
           }
         </hlm-form-field>
         <hlm-form-field>
-          <input class="w-full my-4" hlmInput type="password" placeholder="Password" formControlName="password"/>
+          <input class="w-full my-4" hlmInput type="password" placeholder="Password" formControlName="password" id="password-input" aria-label="Password"/>
           @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
-            <hlm-error>Your password is required</hlm-error>
+            <hlm-error id="password-required-error">Your password is required</hlm-error>
           }
         </hlm-form-field>
         @if (errorMessage) {
-          <hlm-error>{{ errorMessage }}</hlm-error>
+          <hlm-error id="login-error-message">{{ errorMessage }}</hlm-error>
         }
       </p>
       <div hlmCardFooter>
-        <button hlmBtn type="submit" [disabled]="loginForm.invalid">Login</button>
+        <button hlmBtn type="submit" [disabled]="loginForm.invalid" id="login-submit-button" aria-label="Submit login">Login</button>
       </div>
     </form>
   </section>
-  
+
   `
 })
 export class LoginComponent {

@@ -27,6 +27,7 @@ import {
   HlmSubMenuComponent,
 } from '@spartan-ng/ui-menu-helm';
 import { UserInfo } from '../../../features/user/interface';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-navbar',
@@ -120,11 +121,11 @@ import { UserInfo } from '../../../features/user/interface';
 export class NavbarComponent {
   constructor(private authService: AuthService, private themeService: ThemeService) {}
 
-  currentUser: UserInfo | null = null;
+  currentUser: User | null = null;
 
   ngOnInit() {
     this.authService.getCurrentUser().subscribe((user) => {
-      this.currentUser = user as UserInfo | null;
+      this.currentUser = user as User | null;
     });
   }
 

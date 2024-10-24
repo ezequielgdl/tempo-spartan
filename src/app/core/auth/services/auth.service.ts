@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject, from, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { SupabaseClient, User } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase.service'
+import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null | undefined>;
   public currentUser$: Observable<User | null | undefined>;
 
-  constructor(private supabaseService: SupabaseService) {
+  constructor(private supabaseService: SupabaseService, private errorHandlerService: ErrorHandlerService) {
     this.supabase = this.supabaseService.getClient();
     this.currentUserSubject = new BehaviorSubject<User | null | undefined>(undefined);
     this.currentUser$ = this.currentUserSubject.asObservable();
@@ -38,10 +39,7 @@ export class AuthService {
     return from(this.supabase.auth.signInWithPassword({ email, password })).pipe(
       map(({ data }) => data.user),
       tap(user => this.currentUserSubject.next(user)),
-      catchError((error) => {
-        console.error('Error logging in:', error);
-        return of(null);
-      })
+      catchError(this.errorHandlerService.handleError<User | null>('login', null))
     );
   }
 
@@ -49,10 +47,7 @@ export class AuthService {
     return from(this.supabase.auth.signUp({ email, password })).pipe(
       map(({ data }) => data.user),
       tap(user => this.currentUserSubject.next(user)),
-      catchError((error) => {
-        console.error('Error signing up:', error);
-        return of(null);
-      })
+      catchError(this.errorHandlerService.handleError<User | null>('signUp', null))
     );
   }
 
@@ -64,10 +59,7 @@ export class AuthService {
           this.currentUserSubject.next(session?.user ?? null);
         });
       }),
-      catchError((error) => {
-        console.error('Error logging out:', error);
-        return of(void 0);
-      }),
+      catchError(this.errorHandlerService.handleError<void>('logout', void 0)),
       map(() => void 0)
     );
   }
@@ -88,10 +80,7 @@ export class AuthService {
           this.currentUserSubject.next(user);
         }
       }),
-      catchError((error) => {
-        console.error('Error updating password:', error);
-        return throwError(() => new Error('Failed to update password'));
-      })
+      catchError(this.errorHandlerService.handleError<User | null>('updatePasswordWithToken', null))
     );
   }
 }

@@ -15,6 +15,7 @@ export class UserService {
 
   constructor(private supabaseService: SupabaseService) {
     this.supabase = this.supabaseService.getClient();
+    console.log('supabase', this.supabase);
 
     this.user$ = this.userSubject.pipe(
       switchMap(user => user ? of(user) : this.fetchUser()),

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { UserService } from './user.service';
 import { SupabaseService } from '../../../core/auth/services/supabase.service';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, throwError } from 'rxjs';
 import { UserInfo } from '../interface';
 
 describe('UserService', () => {
@@ -281,6 +281,106 @@ describe('UserService', () => {
         },
         error: (error) => {
           fail('Should not have thrown an error');
+          done();
+        }
+      });
+    });
+  });
+
+  describe('updateOrCreateUser', () => {
+    it('should update an existing user', (done) => {
+      const userId = '1';
+      const updatedUserData: Partial<UserInfo> = {
+        name: 'John Updated',
+        phone: '555-5555'
+      };
+      const updatedUser: UserInfo = { ...mockUser, ...updatedUserData };
+
+      spyOn(service, 'getUser').and.returnValue(of(mockUser));
+      spyOn(service, 'updateUser').and.returnValue(of(updatedUser));
+
+      service.updateOrCreateUser(userId, updatedUserData).subscribe({
+        next: (result) => {
+          expect(result).toEqual(updatedUser);
+          expect(service.getUser).toHaveBeenCalled();
+          expect(service.updateUser).toHaveBeenCalledWith(userId, updatedUserData);
+          done();
+        },
+        error: (error) => {
+          fail('Should not have thrown an error');
+          done();
+        }
+      });
+    });
+
+    it('should create a new user if user does not exist', (done) => {
+      const userId = '2';
+      const newUserData: Partial<UserInfo> = {
+        name: 'Jane Doe',
+        phone: '555-1234'
+      };
+      const newUser: UserInfo = { id: userId, ...newUserData } as UserInfo;
+
+      spyOn(service, 'getUser').and.returnValue(of(null));
+      spyOn(service, 'createUser').and.returnValue(of(newUser));
+
+      service.updateOrCreateUser(userId, newUserData).subscribe({
+        next: (result) => {
+          expect(result).toEqual(newUser);
+          expect(service.getUser).toHaveBeenCalled();
+          expect(service.createUser).toHaveBeenCalledWith(jasmine.objectContaining({ id: userId, ...newUserData }));
+          done();
+        },
+        error: (error) => {
+          fail('Should not have thrown an error');
+          done();
+        }
+      });
+    });
+
+    it('should handle errors when updating user', (done) => {
+      const userId = '1';
+      const updatedUserData: Partial<UserInfo> = {
+        name: 'John Updated',
+        phone: '555-5555'
+      };
+
+      spyOn(service, 'getUser').and.returnValue(of(mockUser));
+      spyOn(service, 'updateUser').and.returnValue(throwError(() => new Error('Update failed')));
+
+      service.updateOrCreateUser(userId, updatedUserData).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Update failed');
+          expect(service.getUser).toHaveBeenCalled();
+          expect(service.updateUser).toHaveBeenCalledWith(userId, updatedUserData);
+          done();
+        }
+      });
+    });
+
+    it('should handle errors when creating user', (done) => {
+      const userId = '2';
+      const newUserData: Partial<UserInfo> = {
+        name: 'Jane Doe',
+        phone: '555-1234'
+      };
+
+      spyOn(service, 'getUser').and.returnValue(of(null));
+      spyOn(service, 'createUser').and.returnValue(throwError(() => new Error('Create failed')));
+
+      service.updateOrCreateUser(userId, newUserData).subscribe({
+        next: () => {
+          fail('Should have thrown an error');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toBe('Create failed');
+          expect(service.getUser).toHaveBeenCalled();
+          expect(service.createUser).toHaveBeenCalledWith(jasmine.objectContaining({ id: userId, ...newUserData }));
           done();
         }
       });

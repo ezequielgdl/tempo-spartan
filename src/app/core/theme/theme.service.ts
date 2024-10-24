@@ -12,12 +12,6 @@ export class ThemeService {
     this.updateTheme();
   }
 
-  toggleDarkMode() {
-    this.darkMode.next(!this.darkMode.value);
-    localStorage.setItem('darkMode', JSON.stringify(this.darkMode.value));
-    this.updateTheme();
-  }
-
   private getInitialTheme(): boolean {
     const savedTheme = localStorage.getItem('darkMode');
     return savedTheme ? JSON.parse(savedTheme) : false;
@@ -29,5 +23,11 @@ export class ThemeService {
     } else {
       document.documentElement.classList.remove('dark');
     }
+  }
+
+  toggleDarkMode() {
+    this.darkMode.next(!this.darkMode.value);
+    localStorage.setItem('darkMode', JSON.stringify(this.darkMode.value));
+    this.updateTheme();
   }
 }

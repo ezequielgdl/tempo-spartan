@@ -1,41 +1,27 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { SupabaseService } from './supabase.service';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let mockSupabaseService: jasmine.SpyObj<SupabaseService>;
-  let mockSupabaseClient: any; // Using 'any' to avoid TypeScript errors with our mock
+  let mockSupabaseClient: any;
 
   beforeEach(() => {
-    // Create a more comprehensive mock for SupabaseClient
     mockSupabaseClient = {
-      auth: jasmine.createSpyObj('auth', [
-        'getSession',
-        'signInWithPassword',
-        'signUp',
-        'signOut',
-        'onAuthStateChange',
-        'resetPasswordForEmail',
-        'updateUser'
-      ])
+      auth: {
+        getSession: jasmine.createSpy('getSession').and.returnValue(Promise.resolve({ data: { session: null }, error: null })),
+        onAuthStateChange: jasmine.createSpy('onAuthStateChange').and.returnValue({ data: { subscription: { unsubscribe: () => {} } } }),
+        signInWithPassword: jasmine.createSpy('signInWithPassword'),
+        signUp: jasmine.createSpy('signUp'),
+        signOut: jasmine.createSpy('signOut'),
+        resetPasswordForEmail: jasmine.createSpy('resetPasswordForEmail'),
+        updateUser: jasmine.createSpy('updateUser')
+      }
     };
 
-    // Set up default responses for the auth methods
-    mockSupabaseClient.auth.getSession.and.returnValue(Promise.resolve({ data: { session: null }, error: null }));
-    mockSupabaseClient.auth.signInWithPassword.and.returnValue(Promise.resolve({ data: { user: null }, error: null }));
-    mockSupabaseClient.auth.signUp.and.returnValue(Promise.resolve({ data: { user: null }, error: null }));
-    mockSupabaseClient.auth.signOut.and.returnValue(Promise.resolve({ error: null }));
-    mockSupabaseClient.auth.onAuthStateChange.and.callFake((callback: any) => {
-      // Simulate the callback being called
-      callback('SIGNED_IN', { user: null });
-      // Return a mock unsubscribe function
-      return { data: { subscription: { unsubscribe: () => {} } } };
-    });
-
-    // Create mock for SupabaseService
     mockSupabaseService = jasmine.createSpyObj('SupabaseService', ['getClient']);
     mockSupabaseService.getClient.and.returnValue(mockSupabaseClient);
 
@@ -53,5 +39,4 @@ describe('AuthService', () => {
     expect(authService).toBeTruthy();
   });
 
-  // Add more tests here
 });

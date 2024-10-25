@@ -84,7 +84,7 @@ import { User } from '@supabase/supabase-js';
             <hlm-menu-shortcut>⌘B</hlm-menu-shortcut>
           </button>
 
-          <button id="analytics-menu-item" hlmMenuItem routerLink="/user" role="menuitem" aria-label="Go to analytics">
+          <button id="analytics-menu-item" hlmMenuItem routerLink="/analytics" role="menuitem" aria-label="Go to analytics">
             <hlm-icon name="lucideBarChart" hlmMenuIcon />
             <span>Analytics</span>
             <hlm-menu-shortcut>⌘S</hlm-menu-shortcut>

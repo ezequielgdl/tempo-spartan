@@ -29,6 +29,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/invoices/components/new-invoice/new-invoice.component').then(m => m.NewInvoiceComponent),
         canActivate: [AuthGuard]
     },
+    {
+        path: 'analytics',
+        loadComponent: () => import('./features/analytics/analytics/analytics.component').then(m => m.AnalyticsComponent),
+        canActivate: [AuthGuard]
+    },
 
     // Default route
     { path: '', redirectTo: '/enter', pathMatch: 'full' },

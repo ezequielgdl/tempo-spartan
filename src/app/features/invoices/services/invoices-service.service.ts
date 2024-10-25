@@ -77,6 +77,33 @@ export class InvoicesServiceService {
     );
   }
 
+  updateInvoice(invoice: Invoice): Observable<Invoice | null> {
+    return this.authService.getCurrentUser().pipe(
+      switchMap(user => {
+        if (!user) throw new Error('User not authenticated');
+        return from(this.supabase
+          .from('invoices')
+          .update(invoice)
+          .eq('id', invoice.id)
+          .eq('user_id', user.id)
+        );
+      }),
+      map(({ data, error }) => {
+        if (error) throw error;
+        return data as Invoice | null;
+      }),
+      tap(updatedInvoice => {
+        if (updatedInvoice === null) return;
+        const currentInvoices = this.invoicesSubject.value;
+        if (currentInvoices) {
+          const updatedInvoices = currentInvoices.map(i => i.id === updatedInvoice.id ? updatedInvoice : i);
+          this.invoicesSubject.next(updatedInvoices);
+        }
+      }),
+      catchError(this.errorHandler.handleError<Invoice | null>('updateInvoice', null))
+    );
+  }
+
   deleteInvoice(id: string): Observable<void> {
     return from(this.supabase.auth.getUser()).pipe(
       switchMap(({ data: { user } }) => {

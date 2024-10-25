@@ -14,16 +14,17 @@ import {
   HlmCardTitleDirective,
 } from '@spartan-ng/ui-card-helm';
 import { hlmMuted } from '@spartan-ng/ui-typography-helm';
-
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [HlmInputDirective, CommonModule, EditUserComponent, HlmButtonModule, HlmCardContentDirective, HlmCardDescriptionDirective, HlmCardDirective, HlmCardFooterDirective, HlmCardHeaderDirective, HlmCardTitleDirective],
+  imports: [HlmInputDirective, CommonModule, EditUserComponent, HlmButtonModule, HlmCardContentDirective, HlmCardDescriptionDirective, HlmCardDirective, HlmCardFooterDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmSpinnerComponent],
   host: {
     class: 'block max-w-lg mx-auto w-full p-4'
   },
   template: `
 <section hlmCard>
+  @defer {
   <div hlmCardHeader>
     <h3 hlmCardTitle>Hi, {{ name() }}</h3>
     <p hlmCardDescription>Your profile details</p>
@@ -55,8 +56,13 @@ import { hlmMuted } from '@spartan-ng/ui-typography-helm';
         <p class="">{{ user()?.website }}</p>
       </div>
 </div>
+  } @loading (minimum 200ms) {
+    <div class="flex justify-center items-center h-full p-4">
+      <hlm-spinner />
+    </div>
+  }
   <p hlmCardFooter>
-  @defer (when user()) {  
+    @defer (when user()) {  
       <app-edit-user [user]="user()!"></app-edit-user>
     } @placeholder {
         <button hlmBtn>Loading...</button>

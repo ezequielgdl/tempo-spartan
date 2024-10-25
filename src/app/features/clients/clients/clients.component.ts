@@ -4,17 +4,24 @@ import { ClientsTableComponent } from '../components/clients-table/clients-table
 import { ClientService } from '../services/clients.service';
 import { Client } from '../interface';
 import { NewClientComponent } from '../components/new-client/new-client.component';
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [ClientsTableComponent, JsonPipe, NewClientComponent],
+  imports: [ClientsTableComponent, JsonPipe, NewClientComponent, HlmSpinnerComponent],
   host: {
     class: 'block max-w-5xl mx-auto w-full p-4 flex flex-col gap-6'
   },
   template: `
     <app-new-client />
-    <app-clients-table [clients]="clients()" />
+    @defer {
+      <app-clients-table [clients]="clients()" />
+    } @loading (minimum 300ms) {
+      <div class="flex justify-center items-center h-full">
+        <hlm-spinner />
+      </div>
+    }
   `
 })
 export class ClientsComponent {

@@ -66,6 +66,9 @@
       ],
       "@spartan-ng/ui-alertdialog-helm": [
         "./components/ui-alertdialog-helm/src/index.ts"
+      ],
+      "@spartan-ng/ui-spinner-helm": [
+        "./components/ui-spinner-helm/src/index.ts"
       ]
     }
   },

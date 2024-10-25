@@ -76,4 +76,28 @@ export class InvoicesServiceService {
       catchError(this.errorHandler.handleError<Invoice | null>('createInvoice', null))
     );
   }
+
+  deleteInvoice(id: string): Observable<void> {
+    return from(this.supabase.auth.getUser()).pipe(
+      switchMap(({ data: { user } }) => {
+        if (!user) throw new Error('No authenticated user');
+        return this.supabase
+          .from('invoices')
+          .delete()
+          .eq('id', id)
+          .eq('user_id', user.id);
+      }),
+      map(({ error }) => {
+        if (error) throw error;
+      }),
+      tap(() => {
+        const currentInvoices = this.invoicesSubject.value;
+        if (currentInvoices) {
+          const updatedInvoices = currentInvoices.filter(i => i.id !== id);
+          this.invoicesSubject.next(updatedInvoices);
+        }
+      }),
+      catchError(this.errorHandler.handleError<void>('deleteInvoice', undefined))
+    );
+  }
 }

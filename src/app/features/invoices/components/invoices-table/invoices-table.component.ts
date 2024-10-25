@@ -8,6 +8,7 @@ import {
   HlmTrowComponent,
 } from '@spartan-ng/ui-table-helm';
 import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
+import { DeleteInvoiceComponent } from '../delete-invoice/delete-invoice.component';
 
 @Component({
   selector: 'app-invoices-table',
@@ -18,7 +19,8 @@ import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
     HlmTdComponent,
     HlmThComponent,
     HlmTrowComponent,
-    HlmIconComponent
+    HlmIconComponent,
+    DeleteInvoiceComponent
   ],
   host: {
     class: 'w-full'
@@ -36,8 +38,8 @@ import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
           <hlm-td class="">{{ invoice.date }}</hlm-td>
           <hlm-td class="">{{ invoice.invoiceNumber }}</hlm-td>
           <hlm-td class="flex">
-            <!-- <app-edit-invoice [invoice]="invoice" />
-            <app-delete-invoice [invoiceId]="invoice.id" /> -->
+            <!-- <app-edit-invoice [invoice]="invoice" /> -->
+            <app-delete-invoice [invoiceId]="invoice.id" />
           </hlm-td>
         </hlm-trow>
       }

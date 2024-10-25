@@ -7,7 +7,11 @@ module.exports = {
     './components/**/*.{html,ts}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'pp-pangaia': ['Pp Pangaia']
+      },
+    },
   },
   plugins: [],
 };

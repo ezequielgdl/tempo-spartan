@@ -61,7 +61,7 @@ import { User } from '@supabase/supabase-js';
     class: 'flex w-full items-center justify-between p-4'
   },
   template: `
-  <div id="tempo-logo" aria-label="Tempo logo">Tempo</div>
+  <div class="font-pp-pangaia font-bold text-xl" id="tempo-logo" aria-label="Tempo logo">Tempo</div>
   @if (currentUser) {
     <div>
       <div class="flex w-full items-center justify-center">

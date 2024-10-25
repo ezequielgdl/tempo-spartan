@@ -2,9 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UserService } from '../../services/user.service';
 import { EditUserComponent } from './edit-user.component';
 import { UserInfo } from '../../interface';
-import { of } from 'rxjs';
 
-fdescribe('EditUserComponent', () => {
+describe('EditUserComponent', () => {
   let component: EditUserComponent;
   let fixture: ComponentFixture<EditUserComponent>;
   let userService: UserService;

@@ -8,7 +8,9 @@ import {
   HlmThComponent,
   HlmTrowComponent,
 } from '@spartan-ng/ui-table-helm';
-import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
+import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
+import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
+import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 import { DeleteInvoiceComponent } from '../delete-invoice/delete-invoice.component';
 import { EditInvoiceComponent } from '../edit-invoice/edit-invoice.component';
 import { Client } from '../../../clients/interface';
@@ -25,20 +27,25 @@ import { ClientService } from '../../../clients/services/clients.service';
     HlmIconComponent,
     DeleteInvoiceComponent,
     EditInvoiceComponent,
-    DatePipe
+    DatePipe,
+    BrnSelectImports,
+    HlmSelectImports
   ],
   host: {
     class: 'w-full'
   },
   template: `
-    <div class="flex mb-4">  
-      <select hlmInput id="clientSelect" (change)="onClientSelect($event)">
-        <option value="">All Clients</option>
+    <brn-select class="inline-block mb-4" placeholder="Filter by client">
+      <hlm-select-trigger>
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content class="w-56">
+        <hlm-option value="">All Clients</hlm-option>
         @for (client of clients(); track client.id) {
-        <option [value]="client.id">{{ client.name }}</option>
-      }
-      </select>
-    </div>
+          <hlm-option [value]="client.id" (click)="onClientSelect(client.id)">{{ client.name }}</hlm-option>
+        }
+      </hlm-select-content>
+    </brn-select>
     <hlm-table class="w-full">
       <hlm-caption>A list of your invoices.</hlm-caption>
       <hlm-trow>
@@ -68,6 +75,7 @@ export class InvoicesTableComponent {
   @Input() invoices = signal<Invoice[]>([]);
   clients = signal<Partial<Client>[]>([]);
   selectedClientId = signal<string | null>(null);
+  selectedYear = signal<string | null>('2024');
 
   constructor(private clientsService: ClientService) {}
 
@@ -83,8 +91,7 @@ export class InvoicesTableComponent {
     });
   }
 
-  onClientSelect(event: Event): void {
-    const selectedValue = (event.target as HTMLSelectElement).value;
-    this.selectedClientId.set(selectedValue ? selectedValue : null);
+  onClientSelect(clientId: string | undefined): void {
+    this.selectedClientId.set(clientId ?? null);
   }
 }

@@ -90,7 +90,7 @@ import { User } from '@supabase/supabase-js';
             <hlm-menu-shortcut>⌘S</hlm-menu-shortcut>
           </button>
 
-          <button id="invoices-menu-item" hlmMenuItem routerLink="/user" role="menuitem" aria-label="Go to invoices">
+          <button id="invoices-menu-item" hlmMenuItem routerLink="/invoices" role="menuitem" aria-label="Go to invoices">
             <hlm-icon name="lucideFile" hlmMenuIcon />
             <span>Invoices</span>
             <hlm-menu-shortcut>⌘K</hlm-menu-shortcut>

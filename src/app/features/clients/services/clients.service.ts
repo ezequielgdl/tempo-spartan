@@ -35,15 +35,15 @@ export class ClientService {
     );
   }
 
-  getClient(id: string): Observable<Client | null> {
-    return from(this.supabaseService.getClient().from('clients').select('*').eq('id', id).single()).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data as Client;
-      }),
-      catchError(this.errorHandler.handleError<Client | null>('getClient', null))
-    );
-  }
+  // getClient(id: string): Observable<Client | null> {
+  //   return from(this.supabaseService.getClient().from('clients').select('*').eq('id', id).single()).pipe(
+  //     map(({ data, error }) => {
+  //       if (error) throw error;
+  //       return data as Client;
+  //     }),
+  //     catchError(this.errorHandler.handleError<Client | null>('getClient', null))
+  //   );
+  // }
 
   createClient(client: Omit<Client, 'id' | 'user_id'>): Observable<Client | null> {
     return this.authService.getCurrentUser().pipe(

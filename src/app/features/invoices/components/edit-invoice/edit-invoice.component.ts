@@ -1,56 +1,53 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
+import { Component, computed, Input, signal } from '@angular/core';
 import { Invoice } from '../../interface';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
-import { provideIcons } from '@ng-icons/core';
-import { lucideEdit } from '@ng-icons/lucide';
+
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { BrnDialogContentDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
+import {
+  HlmDialogComponent,
+  HlmDialogContentComponent,
+  HlmDialogDescriptionDirective,
+  HlmDialogFooterComponent,
+  HlmDialogHeaderComponent,
+  HlmDialogTitleDirective,
+} from '@spartan-ng/ui-dialog-helm';
+import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
+import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
+import { ActivatedRoute } from '@angular/router';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-edit-invoice',
   standalone: true,
-  imports: [EditDialogComponent],
-  providers: [provideIcons({ lucideEdit })],
+  imports: [
+    HlmButtonDirective,
+    BrnDialogContentDirective,
+    BrnDialogTriggerDirective,
+    HlmDialogComponent,
+    HlmDialogContentComponent,
+    HlmDialogDescriptionDirective,
+    HlmDialogFooterComponent,
+    HlmDialogHeaderComponent,
+    HlmDialogTitleDirective,
+    HlmInputDirective,
+    HlmLabelDirective,
+    JsonPipe
+  ],
   template: `
-    <app-edit-dialog 
-      buttonText="Edit"
-      title="Edit Client"
-      description="Edit the client details here."
-      [fields]="fields"
-      saveButtonText="Save Changes"
-      (save)="onSave($event)"
-    />
+  {{ invoice() | json }}
+
   `
 })
-export class EditInvoiceComponent implements OnInit {
-  @Input() invoice!: Invoice;
-  fields: Array<{id: string, label: string, value: string | number}> = [];
+export class EditInvoiceComponent {
+  invoice = signal<Invoice | null>(null);
+  timers = computed(() => this.invoice()?.timers);
 
-  constructor(private invoiceService: InvoicesServiceService) {}
+  constructor(private invoiceService: InvoicesServiceService, private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-    this.initializeFields();
-  }
-
-  private initializeFields(): void {
-    if (this.invoice) {
-      this.fields = [
-        { id: 'date', label: 'Date', value: this.invoice.date ?? '' },
-        { id: 'invoiceNumber', label: 'Invoice Number', value: this.invoice.invoiceNumber ?? '' },
-        { id: 'total', label: 'Total', value: this.invoice.total?.toString() ?? '' },
-      ];
-    } else {
-      console.error('Invoice object is undefined');
-    }
-  }
-
-  onSave(data: {[key: string]: string | number}): void {
-    this.invoiceService.updateInvoice(data as unknown as Invoice).subscribe({
-      next: (updatedInvoice) => {
-        if (updatedInvoice) {
-          this.invoice = updatedInvoice;
-        }
-      },
-      error: (error) => console.error('Error updating invoice:', error)
+  ngOnInit() {
+    this.route.params.subscribe((params: any) => {
+      this.invoiceService.getInvoiceById(params['id']).subscribe(invoice => this.invoice.set(invoice));
     });
   }
 }

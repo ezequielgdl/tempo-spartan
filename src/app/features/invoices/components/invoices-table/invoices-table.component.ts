@@ -1,6 +1,8 @@
 import { Component, computed, Input, signal } from '@angular/core';
 import { Invoice } from '../../interface';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import {
   HlmCaptionComponent,
   HlmTableComponent,
@@ -12,7 +14,6 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
 import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 import { DeleteInvoiceComponent } from '../delete-invoice/delete-invoice.component';
-import { EditInvoiceComponent } from '../edit-invoice/edit-invoice.component';
 import { Client } from '../../../clients/interface';
 import { ClientService } from '../../../clients/services/clients.service';
 @Component({
@@ -26,10 +27,11 @@ import { ClientService } from '../../../clients/services/clients.service';
     HlmTrowComponent,
     HlmIconComponent,
     DeleteInvoiceComponent,
-    EditInvoiceComponent,
     DatePipe,
     BrnSelectImports,
-    HlmSelectImports
+    HlmSelectImports,
+    RouterLink,
+    HlmButtonDirective
   ],
   host: {
     class: 'w-full'
@@ -78,7 +80,7 @@ import { ClientService } from '../../../clients/services/clients.service';
           <hlm-td class="flex-1">{{ invoice.total }}</hlm-td>
           <hlm-td class="flex-1">{{ invoice.clientName }}</hlm-td>
           <hlm-td class="flex-1 flex justify-end space-x-2">
-            <app-edit-invoice [invoice]="invoice" />
+            <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
             <app-delete-invoice [invoiceId]="invoice.id" />
           </hlm-td>
         </hlm-trow>

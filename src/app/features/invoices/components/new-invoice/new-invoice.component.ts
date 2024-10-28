@@ -8,6 +8,12 @@ import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
 import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
 
+interface Item {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  amount: number;
+}
 
 @Component({
   selector: 'app-new-invoice',
@@ -19,7 +25,7 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
     HlmInputDirective,
   ],
   host: {
-    class: 'block w-full max-w-xl mx-auto'
+    class: 'block w-full max-w-3xl mx-auto'
   },
   template: `
   <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
@@ -67,9 +73,43 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
         <label hlmLabel for="notes">Notes</label>
         <input hlmInput id="notes" formControlName="notes" type="text" />
 
-        <div class="grid grid-cols-4 gap-4">
+      <div class="flex flex-col gap-2 my-4">
+        <span hlmLabel>Items</span>
+        <button hlmBtn class="w-fit my-2" type="button" (click)="addItem()">Add Item</button>
+        <hr class="my-4"/>
+        <div formArrayName="items" class="flex flex-col gap-2">
+          @for (item of items.controls; track $index) {
+            <div [formGroupName]="$index" class="flex flex-col gap-4">
+              <div class="flex gap-2">
+                <div class="flex-1 flex flex-col gap-2">
+                  <label hlmLabel for="description">Description</label>
+                  <input hlmInput id="description" formControlName="description" placeholder="Description"/>
+                </div>
+                <button hlmBtn type="button" class="mt-6 px-2 py-1" (click)="removeItem($index)">✕</button>
+              </div>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="quantity">Quantity</label>
+                  <input hlmInput id="quantity" type="number" formControlName="quantity" placeholder="Qty"/>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="unitPrice">Price</label>
+                  <input hlmInput id="unitPrice" type="number" formControlName="unitPrice" placeholder="Price"/>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="amount">Amount</label>
+                  <input hlmInput id="amount" type="number" formControlName="amount" readonly/>
+                </div>
+              </div>
+            </div>
+            <hr class="my-4"/>
+          }
+        </div>
+      </div>
+
+      <div class="grid grid-cols-4 gap-4">
           <div class="flex flex-col gap-2">
-            <label hlmLabel for="ivaRate">IVA Rate</label>
+            <label hlmLabel for="ivaRate">IVA Rate (%) </label>
             <input hlmInput id="ivaRate" formControlName="ivaRate" type="number" />
           </div>
           <div class="flex flex-col gap-2">
@@ -77,7 +117,7 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
             <input hlmInput id="ivaAmount" formControlName="ivaAmount" type="number" readonly/>
           </div>
           <div class="flex flex-col gap-2">
-            <label hlmLabel for="irpfRate">IRPF Rate</label>
+            <label hlmLabel for="irpfRate">IRPF Rate (%) </label>
             <input hlmInput id="irpfRate" formControlName="irpfRate" type="number" />
           </div>
           <div class="flex flex-col gap-2">
@@ -88,14 +128,14 @@ import { HlmInputDirective } from '@spartan-ng/ui-input-helm';
       </div>
 
       <div class="grid grid-cols-2 gap-4">
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="subtotal">Subtotal</label>
-            <input hlmInput id="subtotal" formControlName="subtotal" type="number" readonly/>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="total">Total</label>
-            <input hlmInput id="total" formControlName="total" type="number" readonly/>
-          </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="subtotal">Subtotal</label>
+          <input hlmInput id="subtotal" formControlName="subtotal" type="number" readonly/>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="total">Total</label>
+          <input hlmInput id="total" formControlName="total" type="number" readonly/>
+        </div>
       </div>
 
       <button hlmBtn type="submit" [disabled]="invoiceForm.invalid">Create Invoice</button>
@@ -107,6 +147,10 @@ export class NewInvoiceComponent {
   clients = signal<Partial<Client>[]>([]);
   invoiceForm: FormGroup;
 
+  get items() {
+    return this.invoiceForm.get('items') as FormArray;
+  }
+
   constructor(private invoiceService: InvoicesServiceService, private clientService: ClientService, private fb: FormBuilder) {
     this.invoiceForm = this.fb.group({
       invoiceNumber: ['', Validators.required],
@@ -115,12 +159,27 @@ export class NewInvoiceComponent {
       issueDate: [new Date().toISOString().slice(0, 10), Validators.required],
       dueDate: [new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().slice(0, 10), Validators.required],
       currency: ['EUR', Validators.required],
-      subject: ['', Validators.required],
+      subject: [''],
       ivaRate: [10, Validators.required],
       ivaAmount: [0, Validators.required],
       irpfRate: [15, Validators.required],
       irpfAmount: [0, Validators.required],
-      notes: ['', Validators.required]
+      notes: [''],
+      items: this.fb.array([]),
+      subtotal: [0, Validators.required],
+      total: [0, Validators.required]
+    });
+
+    this.items.valueChanges.subscribe(() => {
+      this.calculateTotals();
+    });
+
+    this.invoiceForm.get('ivaRate')?.valueChanges.subscribe(() => {
+      this.calculateTotals();
+    });
+
+    this.invoiceForm.get('irpfRate')?.valueChanges.subscribe(() => {
+      this.calculateTotals();
     });
   }
 
@@ -138,6 +197,58 @@ export class NewInvoiceComponent {
     const selectedClientId = (event.target as HTMLSelectElement).value;
     const selectedClient = this.clients().find(client => client.id === selectedClientId);
     this.invoiceForm.patchValue({ clientName: selectedClient?.name || '' });
+  }
+
+  createItem(): FormGroup {
+    return this.fb.group({
+      description: ['', Validators.required],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      unitPrice: [0, [Validators.required, Validators.min(0)]],
+      amount: [0]
+    });
+  }
+
+  addItem() {
+    this.items.push(this.createItem());
+  }
+
+  removeItem(index: number) {
+    this.items.removeAt(index);
+    this.calculateTotals();
+  }
+
+  calculateTotals() {
+    const items = this.items.value as Item[];
+    
+    // Calculate line item amounts
+    items.forEach((item, index) => {
+      const amount = Number(item.quantity) * Number(item.unitPrice);
+      this.items.at(index).patchValue({ amount }, { emitEvent: false });
+    });
+
+    // Calculate subtotal
+    const subtotal = items.reduce((sum, item) => {
+      const amount = Number(item.quantity) * Number(item.unitPrice);
+      return sum + amount;
+    }, 0);
+    
+    // Calculate IVA and IRPF
+    const ivaRate = Number(this.invoiceForm.get('ivaRate')?.value) || 0;
+    const irpfRate = Number(this.invoiceForm.get('irpfRate')?.value) || 0;
+    
+    const ivaAmount = (subtotal * ivaRate) / 100;
+    const irpfAmount = (subtotal * irpfRate) / 100;
+    
+    // Calculate total
+    const total = subtotal + ivaAmount - irpfAmount;
+
+    // Update form values
+    this.invoiceForm.patchValue({
+      subtotal,
+      ivaAmount,
+      irpfAmount,
+      total
+    }, { emitEvent: false });
   }
 
   onSubmit() {

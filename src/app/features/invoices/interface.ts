@@ -18,3 +18,10 @@ export interface Invoice {
     timers: any[];
     total: number;
   }
+
+export interface Items {
+  id: number;
+  units?: number;
+  commentary: string;
+  total: number;
+}

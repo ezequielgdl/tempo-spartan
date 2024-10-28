@@ -1,6 +1,7 @@
-import { Component, computed, Input, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { Invoice } from '../../interface';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
 import { BrnDialogContentDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
@@ -32,16 +33,26 @@ import { JsonPipe } from '@angular/common';
     HlmDialogTitleDirective,
     HlmInputDirective,
     HlmLabelDirective,
-    JsonPipe
+    JsonPipe,
+    ReactiveFormsModule
   ],
   template: `
-  {{ invoice() | json }}
+  <form [formGroup]="editInvoiceForm">
 
+
+  </form>
   `
 })
 export class EditInvoiceComponent {
   invoice = signal<Invoice | null>(null);
   timers = computed(() => this.invoice()?.timers);
+
+  editInvoiceForm = new FormGroup({
+    clientName: new FormControl(''),
+    invoiceNumber: new FormControl(''),
+    issueDate: new FormControl(''),
+    dueDate: new FormControl(''),
+  });
 
   constructor(private invoiceService: InvoicesServiceService, private route: ActivatedRoute) {}
 

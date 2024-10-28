@@ -35,6 +35,30 @@ export class ClientService {
     );
   }
 
+  private fetchClients(): Observable<Client[]> {
+    return from(this.supabase.auth.getUser()).pipe(
+      switchMap(({ data: { user } }) => {
+        if (!user) return of(null);
+        return this.supabase
+          .from('clients')
+          .select('*')
+          .eq('user_id', user.id);
+      }),
+      map((response) => {
+        if (!response) throw new Error('No response');
+        const { data, error } = response;
+        if (error) throw error;
+        return data as Client[];
+      }),
+      tap(clients => {
+        if (clients && !this.clientsSubject.value) {
+          this.clientsSubject.next(clients);
+        }
+      }),
+      catchError(this.errorHandler.handleError<Client[]>('fetchClients', []))
+    );
+  }
+
   // getClient(id: string): Observable<Client | null> {
   //   return from(this.supabaseService.getClient().from('clients').select('*').eq('id', id).single()).pipe(
   //     map(({ data, error }) => {
@@ -116,33 +140,6 @@ export class ClientService {
         }
       }),
       catchError(this.errorHandler.handleError<void>('deleteClient', undefined))
-    );
-  }
-
-  private fetchClients(): Observable<Client[]> {
-    return from(this.supabase.auth.getUser()).pipe(
-      switchMap(({ data: { user } }) => {
-        if (!user) return of(null);
-        return this.supabase
-          .from('clients')
-          .select('*')
-          .eq('user_id', user.id);
-      }),
-      map((response) => {
-        if (!response) throw new Error('No response');
-        const { data, error } = response;
-        if (error) throw error;
-        return data as Client[];
-      }),
-      tap(clients => {
-        if (clients && !this.clientsSubject.value) {
-          this.clientsSubject.next(clients);
-        }
-      }),
-      catchError(error => {
-        console.error('Error fetching clients:', error);
-        return of([]);
-      })
     );
   }
 }

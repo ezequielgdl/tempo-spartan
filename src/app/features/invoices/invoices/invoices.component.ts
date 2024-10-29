@@ -4,16 +4,23 @@ import { InvoicesTableComponent } from '../components/invoices-table/invoices-ta
 import { ClientService } from '../../clients/services/clients.service';
 import { Invoice } from '../interface';
 import { Client } from '../../clients/interface';
+import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 
 @Component({
   selector: 'app-invoices',
   standalone: true,
-  imports: [InvoicesTableComponent],
+  imports: [InvoicesTableComponent, HlmSpinnerComponent],
   host: {
     class: 'block max-w-5xl mx-auto w-full p-4 flex flex-col gap-6'
   },
   template: `
-    <app-invoices-table [invoices]="invoices"/>
+    @defer {
+      <app-invoices-table [invoices]="invoices" />
+    } @loading (minimum 300ms) {
+      <div class="flex justify-center items-center h-full">
+        <hlm-spinner />
+      </div>
+    }
   `,
 })
 export class InvoicesComponent {

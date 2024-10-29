@@ -49,7 +49,6 @@ export class InvoicesServiceService {
       catchError(this.errorHandler.handleError<Invoice | null>('getInvoiceById', null))
     );
   }
-
   createInvoice(invoice: Omit<Invoice, 'id' | 'user_id'>): Observable<Invoice | null> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
@@ -69,7 +68,6 @@ export class InvoicesServiceService {
       }),
       tap(newInvoice => {
         const currentInvoices = this.invoicesSubject.value;
-        console.log('currentInvoices', currentInvoices);
         if (currentInvoices) {
           this.invoicesSubject.next([...currentInvoices, newInvoice]);
         } else {
@@ -83,20 +81,23 @@ export class InvoicesServiceService {
   updateInvoice(invoice: Invoice): Observable<Invoice | null> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
-        if (!user) throw new Error('User not authenticated');
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
         return from(this.supabase
           .from('invoices')
           .update(invoice)
           .eq('id', invoice.id)
           .eq('user_id', user.id)
+          .select('*')
+          .single()
         );
       }),
       map(({ data, error }) => {
         if (error) throw error;
-        return data as Invoice | null;
+        return data as Invoice;
       }),
       tap(updatedInvoice => {
-        if (updatedInvoice === null) return;
         const currentInvoices = this.invoicesSubject.value;
         if (currentInvoices) {
           const updatedInvoices = currentInvoices.map(i => i.id === updatedInvoice.id ? updatedInvoice : i);

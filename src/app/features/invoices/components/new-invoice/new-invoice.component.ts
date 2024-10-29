@@ -12,6 +12,7 @@ import { Item } from '../../interface'
 import { Router } from '@angular/router';
 
 import { merge, EMPTY } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-invoice',
@@ -261,9 +262,10 @@ export class NewInvoiceComponent {
   }
 
   onSubmit() {
-    if (this.invoiceForm.valid) {
-      console.log(this.invoiceForm.value);
-      this.invoiceService.createInvoice(this.invoiceForm.value).subscribe({
+    if (this.invoiceForm.valid) {      
+      this.invoiceService.createInvoice(this.invoiceForm.value).pipe(
+        take(1)
+      ).subscribe({
         next: (invoice) => {
           if (invoice) {
             console.log('Invoice created successfully:', invoice);
@@ -271,8 +273,13 @@ export class NewInvoiceComponent {
           }
         },
         error: (error) => {
-          // Handle error - e.g., show error message
           console.error('Error creating invoice:', error);
+          // Re-enable the form on error
+          this.invoiceForm.enable();
+        },
+        complete: () => {
+          // Re-enable the form on completion
+          this.invoiceForm.enable();
         }
       });
     }

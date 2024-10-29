@@ -15,13 +15,8 @@ export class InvoicesServiceService {
 
   constructor(private supabaseService: SupabaseService, private authService: AuthService, private errorHandler: ErrorHandlerService) {
     this.supabase = supabaseService.getClient();
+    this.fetchInvoices().subscribe();
     this.invoices$ = this.invoicesSubject.asObservable().pipe(
-      switchMap(invoices => {
-        if (invoices === null) {
-          return this.fetchInvoices();
-        }
-        return of(invoices);
-      }),
       shareReplay(1)
     );
    }
@@ -42,9 +37,7 @@ export class InvoicesServiceService {
         return data as Invoice[];
       }),
       tap(invoices => {
-        if (invoices && !this.invoicesSubject.value) {
-          this.invoicesSubject.next(invoices);
-        }
+        this.invoicesSubject.next(invoices);
       }),
       catchError(this.errorHandler.handleError<Invoice[] | null>('fetchInvoices', null))
     );
@@ -75,11 +68,12 @@ export class InvoicesServiceService {
         return data as Invoice;
       }),
       tap(newInvoice => {
-        if (this.invoicesSubject.value === null) {
-          this.fetchInvoices().subscribe();
-        } else {
-          const currentInvoices = this.invoicesSubject.value;
+        const currentInvoices = this.invoicesSubject.value;
+        console.log('currentInvoices', currentInvoices);
+        if (currentInvoices) {
           this.invoicesSubject.next([...currentInvoices, newInvoice]);
+        } else {
+          this.invoicesSubject.next([newInvoice]);
         }
       }),
       catchError(this.errorHandler.handleError<Invoice | null>('createInvoice', null))

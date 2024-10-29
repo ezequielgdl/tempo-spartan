@@ -19,7 +19,7 @@ import { Client } from '../../clients/interface';
 export class InvoicesComponent {
   invoices = signal<Invoice[]>([]);
 
-  constructor(private invoicesService: InvoicesServiceService, private clientsService: ClientService) {
+  constructor(private invoicesService: InvoicesServiceService) {
     this.invoicesService.invoices$.subscribe(invoices => {
       if (invoices) {
         this.invoices.set(invoices);

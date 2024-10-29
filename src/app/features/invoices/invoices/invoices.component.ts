@@ -21,7 +21,9 @@ export class InvoicesComponent {
 
   constructor(private invoicesService: InvoicesServiceService, private clientsService: ClientService) {
     this.invoicesService.invoices$.subscribe(invoices => {
-      this.invoices.set(invoices!);
+      if (invoices) {
+        this.invoices.set(invoices);
+      }
     });
   }
 }

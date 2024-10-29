@@ -15,13 +15,15 @@ export interface Invoice {
     notes: string;
     subject: string;
     subtotal: number;
-    timers: any[];
+    timers?: any[];
+    items?: Item[];
     total: number;
   }
 
-export interface Items {
+export interface Item {
   id: number;
-  units?: number;
-  commentary: string;
-  total: number;
+  quantity: number;
+  description: string;
+  price: number;
+  amount: number;
 }

@@ -15,13 +15,18 @@ export class InvoicesServiceService {
 
   constructor(private supabaseService: SupabaseService, private authService: AuthService, private errorHandler: ErrorHandlerService) {
     this.supabase = supabaseService.getClient();
-    this.invoices$ = this.invoicesSubject.pipe(
-      switchMap(invoices => invoices ? of(invoices) : this.fetchInvoices()),
+    this.invoices$ = this.invoicesSubject.asObservable().pipe(
+      switchMap(invoices => {
+        if (invoices === null) {
+          return this.fetchInvoices();
+        }
+        return of(invoices);
+      }),
       shareReplay(1)
     );
    }
 
-   private fetchInvoices(): Observable<Invoice[] | null> {
+   public fetchInvoices(): Observable<Invoice[] | null> {
     return from(this.supabase.auth.getUser()).pipe(
       switchMap(({ data: { user } }) => {
         if (!user) return of(null);
@@ -61,7 +66,7 @@ export class InvoicesServiceService {
         return from(this.supabase
           .from('invoices')
           .insert({ ...invoice, user_id: user.id })
-          .select()
+          .select('*')
           .single()
         );
       }),
@@ -70,8 +75,12 @@ export class InvoicesServiceService {
         return data as Invoice;
       }),
       tap(newInvoice => {
-        const currentInvoices = this.invoicesSubject.value;
-        this.invoicesSubject.next([...(currentInvoices || []), newInvoice]);
+        if (this.invoicesSubject.value === null) {
+          this.fetchInvoices().subscribe();
+        } else {
+          const currentInvoices = this.invoicesSubject.value;
+          this.invoicesSubject.next([...currentInvoices, newInvoice]);
+        }
       }),
       catchError(this.errorHandler.handleError<Invoice | null>('createInvoice', null))
     );

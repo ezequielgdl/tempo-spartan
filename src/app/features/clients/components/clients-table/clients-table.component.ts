@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Client } from '../../interface';
 import { EditClientsComponent } from '../edit-clients/edit-clients.component';
 import { DeleteClientComponent } from '../delete-client/delete-client.component';
@@ -16,6 +16,7 @@ import { lucideEdit } from '@ng-icons/lucide';
 @Component({
   selector: 'app-clients-table',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     provideIcons({
       lucideEdit

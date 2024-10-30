@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { Client } from '../../interface';
 import { ClientService } from '../../services/clients.service';
@@ -9,6 +9,7 @@ import { lucideEdit } from '@ng-icons/lucide';
   selector: 'app-edit-clients',
   standalone: true,
   imports: [EditDialogComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideIcons({ lucideEdit })],
   template: `
     <app-edit-dialog 

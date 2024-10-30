@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { Invoice } from '../../interface';
+import { ChangeDetectionStrategy, Component, DestroyRef, Input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
 import { BrnAlertDialogComponent, BrnAlertDialogContentDirective, BrnAlertDialogTriggerDirective } from '@spartan-ng/ui-alertdialog-brain';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
@@ -14,14 +14,37 @@ import {
   HlmAlertDialogOverlayDirective,
   HlmAlertDialogTitleDirective,
 } from '@spartan-ng/ui-alertdialog-helm';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-delete-invoice',
   standalone: true,
-  imports: [BrnAlertDialogComponent, BrnAlertDialogContentDirective, BrnAlertDialogTriggerDirective, HlmAlertDialogActionButtonDirective, HlmAlertDialogCancelButtonDirective, HlmAlertDialogDescriptionDirective, HlmAlertDialogFooterComponent, HlmAlertDialogHeaderComponent, HlmAlertDialogOverlayDirective, HlmAlertDialogTitleDirective, HlmAlertDialogContentComponent, HlmAlertDialogComponent, HlmButtonDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    BrnAlertDialogComponent, 
+    BrnAlertDialogContentDirective, 
+    BrnAlertDialogTriggerDirective,
+    HlmAlertDialogActionButtonDirective,
+    HlmAlertDialogCancelButtonDirective,
+    HlmAlertDialogDescriptionDirective,
+    HlmAlertDialogFooterComponent,
+    HlmAlertDialogHeaderComponent,
+    HlmAlertDialogOverlayDirective,
+    HlmAlertDialogTitleDirective,
+    HlmAlertDialogContentComponent,
+    HlmAlertDialogComponent,
+    HlmButtonDirective
+  ],
   template: `
     <hlm-alert-dialog>
-     <button id="delete-invoice" brnAlertDialogTrigger hlmBtn>Delete</button>
+      <button 
+        id="delete-invoice" 
+        brnAlertDialogTrigger 
+        hlmBtn 
+        [disabled]="isDeleting()"
+      >
+        {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+      </button>
       <hlm-alert-dialog-content *brnAlertDialogContent="let ctx">
         <hlm-alert-dialog-header>
           <h3 hlmAlertDialogTitle>Are you absolutely sure?</h3>
@@ -30,21 +53,49 @@ import {
           </p>
         </hlm-alert-dialog-header>
         <hlm-alert-dialog-footer>
-          <button hlmAlertDialogCancel (click)="ctx.close()">Cancel</button>
-          <button hlmAlertDialogAction (click)="onDelete(invoiceId); ctx.close()">Delete Invoice</button>
+          <button 
+            hlmAlertDialogCancel 
+            [disabled]="isDeleting()" 
+            (click)="ctx.close()"
+          >
+            Cancel
+          </button>
+          <button 
+            hlmAlertDialogAction 
+            [disabled]="isDeleting()"
+            (click)="onDelete(invoiceId, ctx)"
+          >
+            {{ isDeleting() ? 'Deleting...' : 'Delete Invoice' }}
+          </button>
         </hlm-alert-dialog-footer>
       </hlm-alert-dialog-content>
     </hlm-alert-dialog>
   `,
 })
 export class DeleteInvoiceComponent {
-  @Input() invoiceId!: string;
+  @Input({ required: true }) invoiceId!: string;
+  
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly invoiceService = inject(InvoicesServiceService);
+  
+  protected readonly isDeleting = signal(false);
 
-  constructor(private invoiceService: InvoicesServiceService) {}
-
-  onDelete(invoiceId: string): void {
-    this.invoiceService.deleteInvoice(invoiceId).subscribe(() => {
-      this.invoiceService.invoices$.subscribe();
-    });
+  protected onDelete(invoiceId: string, ctx: { close: () => void }): void {
+    this.isDeleting.set(true);
+    
+    this.invoiceService.deleteInvoice(invoiceId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.isDeleting.set(false);
+          ctx.close();
+        },
+        error: () => {
+          this.isDeleting.set(false);
+          // Could add error handling here
+        }
+      });
   }
 }

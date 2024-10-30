@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { ClientService } from '../../services/clients.service';
 import { Validators, ValidatorFn } from '@angular/forms';
@@ -7,6 +7,7 @@ import { Validators, ValidatorFn } from '@angular/forms';
   selector: 'app-new-client',
   standalone: true,
   imports: [EditDialogComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-edit-dialog 
       buttonText="New Client"

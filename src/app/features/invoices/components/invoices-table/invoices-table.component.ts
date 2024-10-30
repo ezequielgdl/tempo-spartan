@@ -1,4 +1,4 @@
-import { Component, computed, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 import { Invoice } from '../../interface';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ import { ClientService } from '../../../clients/services/clients.service';
 @Component({
   selector: 'app-invoices-table',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HlmCaptionComponent,
     HlmTableComponent,

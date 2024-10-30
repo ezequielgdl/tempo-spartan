@@ -62,7 +62,6 @@ import { ClientService } from '../../../clients/services/clients.service';
       </brn-select>
     </div>
     <hlm-table class="w-full overflow-x-auto">
-      <hlm-caption>A list of your invoices.</hlm-caption>
       <hlm-trow>
         <hlm-th class="flex-1 cursor-pointer" (click)="toggleSortDirection()">
           Date
@@ -86,8 +85,7 @@ import { ClientService } from '../../../clients/services/clients.service';
         </hlm-trow>
       }
     </hlm-table>
-  `,
-  styles: ``
+  `
 })
 export class InvoicesTableComponent {
   @Input() invoices = signal<Invoice[]>([]);

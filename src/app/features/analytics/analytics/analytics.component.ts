@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, signal } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { ClientService } from '../../clients/services/clients.service';
 import { InvoicesServiceService } from '../../invoices/services/invoices-service.service';
@@ -9,6 +9,7 @@ import { IvaAnalysisComponent } from '../components/iva-analysis/iva-analysis.co
 @Component({
   selector: 'app-analytics',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     JsonPipe,
     IvaAnalysisComponent

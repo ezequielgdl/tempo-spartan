@@ -1,5 +1,5 @@
 import { CurrencyPipe, JsonPipe } from '@angular/common';
-import { Component, computed, Input, signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, signal, SimpleChanges } from '@angular/core';
 import {
   HlmCardContentDirective,
   HlmCardDescriptionDirective,
@@ -19,6 +19,7 @@ interface IvaData {
 @Component({
   selector: 'app-iva-analysis',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     HlmCardDirective,
     HlmCardContentDirective,

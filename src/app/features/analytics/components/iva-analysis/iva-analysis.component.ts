@@ -38,18 +38,25 @@ interface IvaData {
         <p hlmCardDescription>Quarterly tax breakdown</p>
       </div>
       <div hlmCardContent>
-        <brn-select class="mb-4 inline-block" [placeholder]="selectedYear()?.toString() ?? 'Filter by year'">
-          <hlm-select-trigger>
-            <hlm-select-value />
-          </hlm-select-trigger>
-          <hlm-select-content class="min-w-48">
-            @for (year of years(); track year) {
-              <hlm-option [value]="year.toString()" (click)="onYearSelect(year.toString())">
-                {{ year }}
-              </hlm-option>
-            }
-          </hlm-select-content>
-        </brn-select>
+        <div class="flex items-center justify-between mb-6">
+          <brn-select class="inline-block" [placeholder]="selectedYear()?.toString() ?? 'Filter by year'">
+            <hlm-select-trigger>
+              <hlm-select-value />
+            </hlm-select-trigger>
+            <hlm-select-content class="w-fit">
+              @for (year of years(); track year) {
+                <hlm-option [value]="year.toString()" (click)="onYearSelect(year.toString())">
+                  {{ year }}
+                </hlm-option>
+              }
+            </hlm-select-content>
+          </brn-select>
+
+          <div class="text-right">
+            <div class="text-sm text-muted-foreground">Annual Total</div>
+            <div class="text-xl font-semibold">{{ annualTotal() | currency:'EUR' }}</div>
+          </div>
+        </div>
 
         <div class="grid grid-cols-2 gap-4">
           @for (quarter of quarters; track quarter.id) {
@@ -114,6 +121,10 @@ export class IvaAnalysisComponent {
     { id: 3, label: 'Q3 (Jul - Sep)', value: this.trimester3 },
     { id: 4, label: 'Q4 (Oct - Dec)', value: this.trimester4 },
   ];
+
+  protected readonly annualTotal = computed(() => {
+    return this.filteredIvaData().reduce((sum, item) => sum + item.ivaAmount, 0);
+  });
 
   // Lifecycle hooks
   ngOnChanges(changes: SimpleChanges): void {

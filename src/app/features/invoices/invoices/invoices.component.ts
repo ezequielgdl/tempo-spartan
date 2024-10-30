@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { InvoicesServiceService } from '../services/invoices-service.service';
 import { InvoicesTableComponent } from '../components/invoices-table/invoices-table.component';
 import { Invoice } from '../interface';
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-invoices',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,  
   imports: [InvoicesTableComponent, HlmSpinnerComponent, HlmButtonDirective],
   host: {
     class: 'block max-w-5xl mx-auto w-full p-4 flex flex-col gap-6'

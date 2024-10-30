@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidatorFn, FormArray } from '@angular/forms';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
 import { ClientService } from '../../../clients/services/clients.service';
@@ -17,6 +17,7 @@ import { take } from 'rxjs/operators';
 @Component({
   selector: 'app-edit-invoice',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     HlmButtonDirective,

@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
 import { UserInfo } from '../interface'
@@ -18,6 +18,7 @@ import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 @Component({
   selector: 'app-user',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,  
   imports: [HlmInputDirective, CommonModule, EditUserComponent, HlmButtonModule, HlmCardContentDirective, HlmCardDescriptionDirective, HlmCardDirective, HlmCardFooterDirective, HlmCardHeaderDirective, HlmCardTitleDirective, HlmSpinnerComponent],
   host: {
     class: 'block max-w-lg mx-auto w-full p-4'

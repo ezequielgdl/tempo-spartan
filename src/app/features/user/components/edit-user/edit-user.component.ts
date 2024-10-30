@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { UserService } from '../../services/user.service';
@@ -8,6 +8,7 @@ import { UserInfo } from '../../interface';
   selector: 'app-edit-user',
   standalone: true,
   imports: [CommonModule, EditDialogComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-edit-dialog
       [buttonText]="'Edit Profile'"

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, effect, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidatorFn, FormArray } from '@angular/forms';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
 import { ClientService } from '../../../clients/services/clients.service';
@@ -11,7 +11,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Item } from '../../interface'
 import { Router } from '@angular/router';
 
-import { merge, EMPTY } from 'rxjs';
+import { merge, EMPTY, Subject, takeUntil } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -144,7 +144,9 @@ import { take } from 'rxjs/operators';
   </form>
   `
 })
-export class NewInvoiceComponent {
+export class NewInvoiceComponent implements OnDestroy {
+  private destroy$ = new Subject<void>();
+
   clients = signal<Partial<Client>[]>([]);
   invoiceForm: FormGroup;
 
@@ -175,13 +177,17 @@ export class NewInvoiceComponent {
       this.items.valueChanges,
       this.invoiceForm.get('ivaRate')?.valueChanges || EMPTY,
       this.invoiceForm.get('irpfRate')?.valueChanges || EMPTY
+    ).pipe(
+      takeUntil(this.destroy$)
     ).subscribe(() => {
       this.calculateTotals();
     });
   }
 
   ngOnInit() {
-    this.clientService.getClients().subscribe(clients => {
+    this.clientService.getClients().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(clients => {
       const simplifiedClients = clients.map(client => ({
         id: client.id,
         name: client.name
@@ -207,6 +213,8 @@ export class NewInvoiceComponent {
     merge(
       itemGroup.get('quantity')?.valueChanges || EMPTY,
       itemGroup.get('price')?.valueChanges || EMPTY
+    ).pipe(
+      takeUntil(this.destroy$)
     ).subscribe(() => {
       const quantity = Number(itemGroup.get('quantity')?.value) || 0;
       const price = Number(itemGroup.get('price')?.value) || 0;
@@ -265,7 +273,7 @@ export class NewInvoiceComponent {
   onSubmit() {
     if (this.invoiceForm.valid) {      
       this.invoiceService.createInvoice(this.invoiceForm.value).pipe(
-        take(1)
+        takeUntil(this.destroy$)
       ).subscribe({
         next: (invoice) => {
           if (invoice) {
@@ -284,5 +292,10 @@ export class NewInvoiceComponent {
         }
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { ClientService } from '../../services/clients.service';
 import { Validators, ValidatorFn } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-new-client',
@@ -19,8 +20,9 @@ import { Validators, ValidatorFn } from '@angular/forms';
     />
   `
 })
-export class NewClientComponent {
+export class NewClientComponent implements OnDestroy {
   fields: Array<{id: string, label: string, value: string | number, validators?: ValidatorFn | ValidatorFn[]}> = [];
+  private destroy$ = new Subject<void>();
 
   constructor(private clientService: ClientService) {}
 
@@ -40,7 +42,17 @@ export class NewClientComponent {
   }
 
   onSave(event: any) {
-    this.clientService.createClient(event).subscribe(); 
-    this.initializeFields();
+    this.clientService.createClient(event)
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.initializeFields();
+      }); 
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

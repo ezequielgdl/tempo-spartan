@@ -237,7 +237,7 @@ export class NewInvoiceComponent implements OnDestroy {
   }
 
   calculateTotals() {
-    const items = this.items.value as Item[];
+    const items = this.items.getRawValue() as Item[];
     
     // Calculate line item amounts
     items.forEach((item, index) => {
@@ -271,8 +271,9 @@ export class NewInvoiceComponent implements OnDestroy {
   }
 
   onSubmit() {
-    if (this.invoiceForm.valid) {      
-      this.invoiceService.createInvoice(this.invoiceForm.value).pipe(
+    if (this.invoiceForm.valid) {  
+      const formData = this.invoiceForm.getRawValue();
+      this.invoiceService.createInvoice(formData).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         next: (invoice) => {

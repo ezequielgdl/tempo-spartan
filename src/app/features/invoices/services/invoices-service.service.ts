@@ -49,6 +49,7 @@ export class InvoicesServiceService {
       catchError(this.errorHandler.handleError<Invoice | null>('getInvoiceById', null))
     );
   }
+  
   createInvoice(invoice: Omit<Invoice, 'id' | 'user_id'>): Observable<Invoice | null> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {

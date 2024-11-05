@@ -80,6 +80,7 @@ import { ClientService } from '../../../clients/services/clients.service';
           <hlm-td class="flex-1">{{ invoice.total }}</hlm-td>
           <hlm-td class="flex-1">{{ invoice.clientName }}</hlm-td>
           <hlm-td class="flex-1 flex justify-end space-x-2">
+            <button hlmBtn routerLink="/invoices/{{ invoice.id }}">View</button>
             <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
             <app-delete-invoice [invoiceId]="invoice.id" />
           </hlm-td>

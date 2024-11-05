@@ -1,19 +1,34 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
 import { UserService } from '../../../user/services/user.service';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
+import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
+import { HlmIconComponent, provideIcons } from '@spartan-ng/ui-icon-helm';
 import { Invoice } from '../../interface';
 import { UserInfo } from '../../../user/interface';
 import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { lucideSave } from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-single-invoice',
   standalone: true,
-  imports: [DatePipe, HlmSpinnerComponent],
+  imports: [DatePipe, HlmSpinnerComponent, CommonModule, HlmButtonDirective, HlmIconComponent],
+  providers: [provideIcons({ lucideSave })],
   template: `
     @defer (when invoice()) {
-      <div class="max-w-4xl mx-auto bg-white p-8 shadow-lg print:shadow-none">
+      <div class="flex justify-center m-4 print:hidden">
+        <button
+          hlmBtn
+          (click)="printInvoice()"
+          class="flex items-center gap-2"
+        >
+          <hlm-icon name="lucideSave" size="sm" />
+          Save as PDF
+        </button>
+      </div>
+      <div #invoiceContainer class="max-w-4xl mx-auto bg-white p-8 shadow-lg print:shadow-none">
         <!-- Header -->
         <div class="flex justify-between mb-8">
           <div>
@@ -104,8 +119,7 @@ import { DatePipe } from '@angular/common';
         <hlm-spinner class="h-10 w-10" />
       </div>
     }
-  `,
-  styles: ``
+  `
 })
 export class SingleInvoiceComponent {
   private invoicesService = inject(InvoicesServiceService);
@@ -114,6 +128,8 @@ export class SingleInvoiceComponent {
 
   invoice = signal<Invoice | null>(null);
   user = signal<UserInfo | null>(null);
+
+  @ViewChild('invoiceContainer') invoiceContainer!: ElementRef;
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -129,4 +145,38 @@ export class SingleInvoiceComponent {
     this.userService.getUser().subscribe(user => this.user.set(user));
   }
 
+  printInvoice() {
+    const printContents = this.invoiceContainer.nativeElement;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <link rel="stylesheet" href="${window.location.origin}/styles.css">
+          <style>
+            body { margin: 0; padding: 16px; }
+            @media print {
+              @page { margin: 0; }
+              body { margin: 16px; }
+            }
+          </style>
+        </head>
+        <body>
+          ${printContents.outerHTML}
+        </body>
+      </html>
+    `);
+
+    // Wait for styles to load
+    printWindow.document.close();
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.onafterprint = () => {
+        printWindow.close();
+      };
+    };
+  }
 }

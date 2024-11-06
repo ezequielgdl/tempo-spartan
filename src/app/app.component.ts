@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HlmButtonModule } from '@spartan-ng/ui-button-helm';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
@@ -15,7 +15,7 @@ import { KeyboardShortcutsService } from './core/keyboard/keyboard-shortcuts.ser
   styles: [],
 })
 export class AppComponent {
-  constructor(private keyboardShortcuts: KeyboardShortcutsService) {}
+  private readonly keyboardShortcuts = inject(KeyboardShortcutsService);
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {

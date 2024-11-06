@@ -315,8 +315,9 @@ export class EditInvoiceComponent {
 
   onSubmit() {
     if (this.invoiceForm.valid) {
+      const rawValues = this.invoiceForm.getRawValue(); 
       this.route.params.pipe(take(1)).subscribe((params: any) => {
-        const invoiceData = { ...this.invoiceForm.value, id: params['id'] };
+        const invoiceData = { ...rawValues, id: params['id'] };
         
         this.invoiceService.updateInvoice(invoiceData).pipe(
           take(1)

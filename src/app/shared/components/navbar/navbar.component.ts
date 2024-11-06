@@ -81,19 +81,19 @@ import { User } from '@supabase/supabase-js';
           <button id="clients-menu-item" hlmMenuItem routerLink="/clients" role="menuitem" aria-label="Go to clients">
             <hlm-icon name="lucideLayers" hlmMenuIcon />
             <span>Clients</span>
-            <hlm-menu-shortcut>⌘B</hlm-menu-shortcut>
+            <hlm-menu-shortcut>⌘C</hlm-menu-shortcut>
           </button>
 
           <button id="analytics-menu-item" hlmMenuItem routerLink="/analytics" role="menuitem" aria-label="Go to analytics">
             <hlm-icon name="lucideBarChart" hlmMenuIcon />
             <span>Analytics</span>
-            <hlm-menu-shortcut>⌘S</hlm-menu-shortcut>
+            <hlm-menu-shortcut>⇧⌘A</hlm-menu-shortcut>
           </button>
 
           <button id="invoices-menu-item" hlmMenuItem routerLink="/invoices" role="menuitem" aria-label="Go to invoices">
             <hlm-icon name="lucideFile" hlmMenuIcon />
             <span>Invoices</span>
-            <hlm-menu-shortcut>⌘K</hlm-menu-shortcut>
+            <hlm-menu-shortcut>⌘I</hlm-menu-shortcut>
           </button>
         </hlm-menu-group>
 
@@ -102,7 +102,7 @@ import { User } from '@supabase/supabase-js';
         <button id="theme-toggle-menu-item" hlmMenuItem (click)="toggleTheme()" role="menuitem" aria-label="Toggle theme">
             <hlm-icon name="lucideSunMoon" hlmMenuIcon />
             <span>Change Theme</span>
-            <hlm-menu-shortcut>⌘T</hlm-menu-shortcut>
+            <hlm-menu-shortcut>⇧⌘O</hlm-menu-shortcut>
           </button>
 
         <hlm-menu-separator />

@@ -64,40 +64,42 @@ import { InvoicesServiceService } from '../../services/invoices-service.service'
         </hlm-select-content>
       </brn-select>
     </div>
-    <hlm-table class="w-full overflow-x-auto">
-      <hlm-trow>
-        <hlm-th class="flex-1 cursor-pointer" (click)="toggleSortDirection()">
-          Date
-          <span class="ml-1">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
-        </hlm-th>
-        <hlm-th class="flex-1">Invoice</hlm-th>
-        <hlm-th class="flex-1">Total</hlm-th>
-        <hlm-th class="flex-1">Client</hlm-th>
-        <hlm-th class="flex-1">Paid</hlm-th>
-        <hlm-th class="flex-1 flex justify-end">Actions</hlm-th>
-      </hlm-trow>
-      @if (sortedInvoices().length === 0) {
-        <div class="text-center text-sm text-gray-500 my-4">No invoices found.</div>
-      } @else {
-        @for (invoice of sortedInvoices(); track invoice.id) {
+    <div class="overflow-x-auto">
+      <hlm-table class="min-w-[800px] w-full">
         <hlm-trow>
-          <hlm-td class="flex-1">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</hlm-td>
-          <hlm-td class="flex-1">{{ invoice.invoiceNumber }}</hlm-td>
-          <hlm-td class="flex-1">{{ invoice.total }}</hlm-td>
-          <hlm-td class="flex-1">{{ invoice.clientName }}</hlm-td>
-          <hlm-td class="flex-1" (click)="onTogglePaid(invoice)">
-            <hlm-switch [checked]="invoice.isPaid" />
-            <span class="ml-2">{{ invoice.isPaid ? 'Yes' : 'No' }}</span>
-          </hlm-td>
-          <hlm-td class="flex-1 flex justify-end space-x-2">
-            <button hlmBtn routerLink="/invoices/{{ invoice.id }}">View</button>
-            <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
-            <app-delete-invoice [invoiceId]="invoice.id" />
-          </hlm-td>
-          </hlm-trow>
+          <hlm-th class="flex-1 cursor-pointer text-left" (click)="toggleSortDirection()">
+            Date
+            <span class="ml-1">{{ sortDirection() === 'asc' ? '▲' : '▼' }}</span>
+          </hlm-th>
+          <hlm-th class="flex-1 text-left">Invoice</hlm-th>
+          <hlm-th class="flex-1 text-left">Total</hlm-th>
+          <hlm-th class="flex-1 text-left">Client</hlm-th>
+          <hlm-th class="flex-1 text-left">Paid</hlm-th>
+          <hlm-th class="flex-1 text-right">Actions</hlm-th>
+        </hlm-trow>
+        @if (sortedInvoices().length === 0) {
+          <div class="text-center text-sm text-gray-500 my-4">No invoices found.</div>
+        } @else {
+          @for (invoice of sortedInvoices(); track invoice.id) {
+          <hlm-trow>
+            <hlm-td class="flex-1">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</hlm-td>
+            <hlm-td class="flex-1">{{ invoice.invoiceNumber }}</hlm-td>
+            <hlm-td class="flex-1 justify-center">{{ invoice.total }}</hlm-td>
+            <hlm-td class="flex-1">{{ invoice.clientName }}</hlm-td>
+            <hlm-td class="flex-1 justify-center" (click)="onTogglePaid(invoice)">
+              <hlm-switch [checked]="invoice.isPaid" />
+              <span class="ml-2">{{ invoice.isPaid ? 'Yes' : 'No' }}</span>
+            </hlm-td>
+            <hlm-td class="flex-1 flex justify-end space-x-2">
+              <button hlmBtn routerLink="/invoices/{{ invoice.id }}">View</button>
+              <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
+              <app-delete-invoice [invoiceId]="invoice.id" />
+            </hlm-td>
+            </hlm-trow>
+          }
         }
-      }
-    </hlm-table>
+      </hlm-table>
+    </div>
   `
 })
 export class InvoicesTableComponent {

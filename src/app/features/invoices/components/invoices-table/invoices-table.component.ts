@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Input, signal } from '@angular/core';
 import { Invoice } from '../../interface';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -10,12 +10,14 @@ import {
   HlmThComponent,
   HlmTrowComponent,
 } from '@spartan-ng/ui-table-helm';
+import { HlmSwitchComponent } from '@spartan-ng/ui-switch-helm';
 import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
 import { HlmSelectImports } from '@spartan-ng/ui-select-helm';
 import { HlmIconComponent } from '@spartan-ng/ui-icon-helm';
 import { DeleteInvoiceComponent } from '../delete-invoice/delete-invoice.component';
 import { Client } from '../../../clients/interface';
 import { ClientService } from '../../../clients/services/clients.service';
+import { InvoicesServiceService } from '../../services/invoices-service.service';
 @Component({
   selector: 'app-invoices-table',
   standalone: true,
@@ -32,14 +34,15 @@ import { ClientService } from '../../../clients/services/clients.service';
     BrnSelectImports,
     HlmSelectImports,
     RouterLink,
-    HlmButtonDirective
+    HlmButtonDirective,
+    HlmSwitchComponent
   ],
   host: {
     class: 'w-full'
   },
   template: `
     <div class="flex justify-start gap-2">  
-      <brn-select class="inline-block" placeholder="Filter by client">
+      <brn-select class="inline-block" placeholder="All Clients">
         <hlm-select-trigger>
         <hlm-select-value />
       </hlm-select-trigger>
@@ -50,12 +53,11 @@ import { ClientService } from '../../../clients/services/clients.service';
         }
       </hlm-select-content>
     </brn-select>
-    <brn-select class="inline-block mb-4" placeholder="Filter by year">
+    <brn-select class="inline-block mb-4" [placeholder]="selectedYear()?.toString() ?? 'Filter by year'">
       <hlm-select-trigger>
-        <hlm-select-value></hlm-select-value>
+        <hlm-select-value />
       </hlm-select-trigger>
       <hlm-select-content class="w-56">
-        <hlm-option value="" (click)="onYearSelect(undefined)">All Years</hlm-option>
         @for (year of years(); track year) {
           <hlm-option [value]="year.toString()" (click)="onYearSelect(year.toString())">{{ year }}</hlm-option>
         }
@@ -71,6 +73,7 @@ import { ClientService } from '../../../clients/services/clients.service';
         <hlm-th class="flex-1">Invoice</hlm-th>
         <hlm-th class="flex-1">Total</hlm-th>
         <hlm-th class="flex-1">Client</hlm-th>
+        <hlm-th class="flex-1">Paid</hlm-th>
         <hlm-th class="flex-1 flex justify-end">Actions</hlm-th>
       </hlm-trow>
       @if (sortedInvoices().length === 0) {
@@ -82,6 +85,10 @@ import { ClientService } from '../../../clients/services/clients.service';
           <hlm-td class="flex-1">{{ invoice.invoiceNumber }}</hlm-td>
           <hlm-td class="flex-1">{{ invoice.total }}</hlm-td>
           <hlm-td class="flex-1">{{ invoice.clientName }}</hlm-td>
+          <hlm-td class="flex-1" (click)="onTogglePaid(invoice)">
+            <hlm-switch [checked]="invoice.isPaid" />
+            <span class="ml-2">{{ invoice.isPaid ? 'Yes' : 'No' }}</span>
+          </hlm-td>
           <hlm-td class="flex-1 flex justify-end space-x-2">
             <button hlmBtn routerLink="/invoices/{{ invoice.id }}">View</button>
             <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
@@ -94,10 +101,11 @@ import { ClientService } from '../../../clients/services/clients.service';
   `
 })
 export class InvoicesTableComponent {
+  private readonly invoicesService = inject(InvoicesServiceService);
   @Input() invoices = signal<Invoice[]>([]);
   clients = signal<Partial<Client>[]>([]);
   selectedClientId = signal<string | null>(null);
-  selectedYear = signal<string | null>("2024");
+  selectedYear = signal<string | null>(new Date().getFullYear().toString());
   
 
   filteredInvoices = computed(() => {
@@ -140,5 +148,9 @@ export class InvoicesTableComponent {
 
   toggleSortDirection(): void {
     this.sortDirection.update(current => current === 'asc' ? 'desc' : 'asc');
+  }
+
+  onTogglePaid(invoice: Invoice): void {
+    this.invoicesService.toggleInvoicePaid(invoice).subscribe();
   }
 }

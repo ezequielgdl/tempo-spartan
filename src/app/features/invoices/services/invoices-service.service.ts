@@ -132,4 +132,34 @@ export class InvoicesServiceService {
       catchError(this.errorHandler.handleError<void>('deleteInvoice', undefined))
     );
   }
+
+  toggleInvoicePaid(invoice: Invoice): Observable<Invoice | null> {
+    return this.authService.getCurrentUser().pipe(
+      switchMap(user => {
+        if (!user) {
+          throw new Error('User not authenticated');
+        }
+        return from(this.supabase
+          .from('invoices')
+          .update({ isPaid: !invoice.isPaid })
+          .eq('id', invoice.id)
+          .eq('user_id', user.id)
+          .select('*')
+          .single()
+        );
+      }),
+      map(({ data, error }) => {
+        if (error) throw error;
+        return data as Invoice;
+      }),
+      tap(updatedInvoice => {
+        const currentInvoices = this.invoicesSubject.value;
+        if (currentInvoices) {
+          const updatedInvoices = currentInvoices.map(i => i.id === updatedInvoice.id ? updatedInvoice : i);
+          this.invoicesSubject.next(updatedInvoices);
+        }
+      }),
+      catchError(this.errorHandler.handleError<Invoice | null>('updateInvoice', null))
+    );
+  }
 }

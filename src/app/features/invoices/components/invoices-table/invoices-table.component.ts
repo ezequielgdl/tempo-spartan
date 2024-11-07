@@ -52,7 +52,7 @@ import { ClientService } from '../../../clients/services/clients.service';
     </brn-select>
     <brn-select class="inline-block mb-4" placeholder="Filter by year">
       <hlm-select-trigger>
-        <hlm-select-value />
+        <hlm-select-value></hlm-select-value>
       </hlm-select-trigger>
       <hlm-select-content class="w-56">
         <hlm-option value="" (click)="onYearSelect(undefined)">All Years</hlm-option>
@@ -73,7 +73,10 @@ import { ClientService } from '../../../clients/services/clients.service';
         <hlm-th class="flex-1">Client</hlm-th>
         <hlm-th class="flex-1 flex justify-end">Actions</hlm-th>
       </hlm-trow>
-      @for (invoice of sortedInvoices(); track invoice.id) {
+      @if (sortedInvoices().length === 0) {
+        <div class="text-center text-sm text-gray-500 my-4">No invoices found.</div>
+      } @else {
+        @for (invoice of sortedInvoices(); track invoice.id) {
         <hlm-trow>
           <hlm-td class="flex-1">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</hlm-td>
           <hlm-td class="flex-1">{{ invoice.invoiceNumber }}</hlm-td>
@@ -84,7 +87,8 @@ import { ClientService } from '../../../clients/services/clients.service';
             <button hlmBtn routerLink="/invoices/edit/{{ invoice.id }}">Edit</button>
             <app-delete-invoice [invoiceId]="invoice.id" />
           </hlm-td>
-        </hlm-trow>
+          </hlm-trow>
+        }
       }
     </hlm-table>
   `
@@ -93,7 +97,7 @@ export class InvoicesTableComponent {
   @Input() invoices = signal<Invoice[]>([]);
   clients = signal<Partial<Client>[]>([]);
   selectedClientId = signal<string | null>(null);
-  selectedYear = signal<string | null>(null);
+  selectedYear = signal<string | null>("2024");
   
 
   filteredInvoices = computed(() => {

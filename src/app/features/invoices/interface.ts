@@ -2,7 +2,6 @@ export interface Invoice {
     clientId: string;
     clientName: string;
     currency: string;
-    date: string;
     dueDate: string;
     id: string;
     invoiceNumber: string;

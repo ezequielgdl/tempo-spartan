@@ -2,7 +2,6 @@
 
 # Environment
 src/environments/environment.ts
-src/environments/environment.development.ts
 .env
 
 # Compiled output

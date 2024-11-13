@@ -104,6 +104,7 @@ import { InvoicesServiceService } from '../../services/invoices-service.service'
 })
 export class InvoicesTableComponent {
   private readonly invoicesService = inject(InvoicesServiceService);
+  private readonly clientsService = inject(ClientService);
   @Input() invoices = signal<Invoice[]>([]);
   clients = signal<Partial<Client>[]>([]);
   selectedClientId = signal<string | null>(null);
@@ -131,8 +132,6 @@ export class InvoicesTableComponent {
     const years = this.invoices().map(invoice => new Date(invoice.issueDate).getFullYear().toString());
     return [...new Set(years)].sort();
   });
-
-  constructor(private clientsService: ClientService) {}
 
   ngOnInit(): void {
     this.clientsService.getClients().subscribe(clients => {

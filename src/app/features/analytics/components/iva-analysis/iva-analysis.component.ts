@@ -1,4 +1,4 @@
-import { CurrencyPipe, JsonPipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, Input, signal, SimpleChanges } from '@angular/core';
 import {
   HlmCardContentDirective,
@@ -29,7 +29,6 @@ interface IvaData {
     HlmCardTitleDirective,
     BrnSelectImports,
     HlmSelectImports,
-    JsonPipe,
     CurrencyPipe
   ],
   template: `

@@ -35,8 +35,10 @@
     "@spartan-ng/ui-tabs-brain": "0.0.1-alpha.356",
     "@spartan-ng/ui-toggle-brain": "0.0.1-alpha.356",
     "@supabase/supabase-js": "^2.45.6",
+    "chart.js": "^4.3.0",
     "class-variance-authority": "^0.6.0",
     "clsx": "^2.1.1",
+    "ng2-charts": "^6.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

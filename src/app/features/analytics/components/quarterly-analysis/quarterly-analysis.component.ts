@@ -40,25 +40,25 @@ interface FinancialData {
   ],
   template: `
     <section hlmCard>
-      <div hlmCardHeader>
-        <h3 hlmCardTitle>{{ title }}</h3>
-        <p hlmCardDescription>{{ description }}</p>
+      <div hlmCardHeader class="py-4">
+        <h3 hlmCardTitle class="text-sm lg:text-md">{{ title }}</h3>
+        <!-- <p hlmCardDescription>{{ description }}</p> -->
       </div>
       <div hlmCardContent>
         <div class="flex items-center justify-end mb-3">
           <div class="text-right">
-            <div class="text-sm text-muted-foreground">Annual Total</div>
-            <div class="text-md lg:text-lg font-semibold">
+            <div class="text-xs text-muted-foreground">Annual Total</div>
+            <div class="text-sm lg:text-md font-semibold">
               {{ annualTotal() | currency : 'EUR' }}
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-2">
           @for (quarter of quarters; track quarter.id) {
-          <div class="p-4 rounded-lg bg-muted">
-            <div class="text-sm text-muted-foreground">{{ quarter.label }}</div>
-            <div class="text-md lg:text-lg font-semibold mt-1">
+          <div class="p-2 rounded-lg bg-muted">
+            <div class="text-xs text-muted-foreground">{{ quarter.label }}</div>
+            <div class="text-sm xl:text-md font-semibold mt-1">
               {{ quarter.value() | currency : 'EUR' }}
             </div>
           </div>

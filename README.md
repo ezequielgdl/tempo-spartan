@@ -1,6 +1,11 @@
-# TempoUI
+# Tempo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.5.
+Tempo is a freelance assistant designed to help you manage clients and generate invoices with insightful analytics. Built using Angular, Tailwind CSS, and Chart.js, Tempo provides a modern and responsive interface for efficient client management.
+
+# Start Generation Here
+
+![Tempo Invoices](.github/tempo-invoices-screenshot.png)
+![Tempo Analytics](.github/tempo-analytics-screenshot.png)
 
 ## Development server
 

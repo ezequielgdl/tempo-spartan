@@ -10,7 +10,7 @@ import {
 import { ClientService } from '../../clients/services/clients.service';
 import { InvoicesServiceService } from '../../invoices/services/invoices-service.service';
 import { QuarterlyAnalysisComponent } from '../components/quarterly-analysis/quarterly-analysis.component';
-import { EarningsChartComponent } from '../components/earnings-chart/earnings-chart.component';
+import { NetEarningsChartComponent } from '../components/net-earnings-chart/net-earnings-chart.component';
 import { ClientEarningsComponent } from '../components/client-earnings/client-earnings.component';
 import { MonthlyEarningsChartComponent } from '../components/monthly-earnings-chart/monthly-earnings-chart.component';
 import { Client } from '../../clients/interface';
@@ -28,7 +28,7 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
     QuarterlyAnalysisComponent,
     BrnSelectImports,
     HlmSelectImports,
-    EarningsChartComponent,
+    NetEarningsChartComponent,
     ClientEarningsComponent,
     MonthlyEarningsChartComponent,
   ],
@@ -87,10 +87,10 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
         </div>
       </article>
       <article class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <app-earnings-chart
+        <app-net-earnings-chart
           [years]="years()"
           [earnings]="earningsPerYear()"
-          color="orange"
+          color="rgba(0, 128, 128, 0.7)"
         />
         <app-client-earnings
           [clientEarnings]="clientEarnings()"

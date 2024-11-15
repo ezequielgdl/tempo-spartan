@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { provideIcons } from '@ng-icons/core';
@@ -171,7 +171,8 @@ import { User } from '@supabase/supabase-js';
 export class NavbarComponent {
   constructor(
     private authService: AuthService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private router: Router
   ) {}
 
   currentUser: User | null = null;
@@ -183,7 +184,9 @@ export class NavbarComponent {
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/']);
+    });
   }
 
   toggleTheme() {

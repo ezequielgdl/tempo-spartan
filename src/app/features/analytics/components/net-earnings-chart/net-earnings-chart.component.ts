@@ -13,7 +13,7 @@ import {
 } from '@spartan-ng/ui-card-helm';
 
 @Component({
-  selector: 'app-earnings-chart',
+  selector: 'app-net-earnings-chart',
   standalone: true,
   imports: [
     HlmCardDirective,
@@ -44,7 +44,7 @@ import {
   `,
   styles: ``,
 })
-export class EarningsChartComponent implements OnChanges {
+export class NetEarningsChartComponent implements OnChanges {
   @Input() earnings!: number[];
   @Input() years!: number[];
   @Input() color = 'lightblue';

@@ -163,7 +163,7 @@ import { NgxPrintModule } from 'ngx-print';
       </div>
       }
     </div>
-    } @placeholder (minimum 200ms){
+    } @placeholder {
     <div class="flex justify-center items-center p-8">
       <hlm-spinner class="h-10 w-10" />
     </div>

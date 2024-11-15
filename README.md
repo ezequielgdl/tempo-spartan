@@ -4,8 +4,8 @@ Tempo is a freelance assistant designed to help you manage clients and generate 
 
 # Start Generation Here
 
-![Tempo Invoices](.github/tempo-invoices-screenshot.png)
-![Tempo Analytics](.github/tempo-analytics-screenshot.png)
+![Tempo Invoices](.github/assets/tempo-invoices-screenshot.png)
+![Tempo Analytics](.github/assets/tempo-analytics-screenshot.png)
 
 ## Development server
 

@@ -1,6 +1,7 @@
-import { Component, computed, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { ThemeService } from '../../../../core/theme/theme.service';
 
 import {
   HlmCardContentDirective,
@@ -31,7 +32,7 @@ import {
       </div>
       <p hlmCardContent class="flex flex-grow items-center justify-center">
         <canvas
-          class="bg-white p-4 rounded-lg h-full w-full"
+          class="p-4 rounded-lg h-full w-full"
           baseChart
           [data]="barChartData"
           [options]="barChartOptions"
@@ -51,6 +52,16 @@ export class EarningsChartComponent implements OnChanges {
     labels: [],
     datasets: [{ data: [], label: 'Earnings' }],
   };
+
+  constructor(
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.themeService.isDarkMode$.subscribe((isDark) => {
+      this.updateChartOptions(isDark);
+      this.cdr.markForCheck();
+    });
+  }
 
   ngOnChanges(): void {
     this.barChartData = {
@@ -74,5 +85,52 @@ export class EarningsChartComponent implements OnChanges {
       },
     },
     indexAxis: 'y',
+    scales: {
+      x: {
+        grid: {
+          color: 'rgba(211, 211, 211, 0.25)', // Default grid color
+        },
+        ticks: {
+          color: 'gray', // Default text color
+        },
+      },
+      y: {
+        grid: {
+          color: 'rgba(211, 211, 211, 0.25)',
+        },
+        ticks: {
+          color: 'gray',
+        },
+      },
+    },
   };
+
+  private updateChartOptions(isDark: boolean): void {
+    const textColor = isDark ? 'white' : 'gray';
+    const gridColor = isDark
+      ? 'rgba(255, 255, 255, 0.25)'
+      : 'rgba(211, 211, 211, 0.25)';
+
+    this.barChartOptions = {
+      ...this.barChartOptions,
+      scales: {
+        x: {
+          grid: {
+            color: gridColor,
+          },
+          ticks: {
+            color: textColor,
+          },
+        },
+        y: {
+          grid: {
+            color: gridColor,
+          },
+          ticks: {
+            color: textColor,
+          },
+        },
+      },
+    };
+  }
 }

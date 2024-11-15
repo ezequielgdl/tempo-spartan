@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
+import { ThemeService } from '../../../../core/theme/theme.service';
 import {
   HlmCardContentDirective,
   HlmCardDirective,
@@ -29,7 +30,7 @@ import {
       </div>
       <div hlmCardContent class="flex flex-grow items-center justify-center">
         <canvas
-          class="bg-white p-4 rounded-lg h-full w-full"
+          class="p-4 rounded-lg h-full w-full"
           baseChart
           [data]="lineChartData"
           [options]="lineChartOptions"
@@ -58,6 +59,16 @@ export class MonthlyEarningsChartComponent implements OnChanges {
     'Dec',
   ];
 
+  constructor(
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.themeService.isDarkMode$.subscribe((isDark) => {
+      this.updateChartOptions(isDark);
+      this.cdr.markForCheck();
+    });
+  }
+
   lineChartData: ChartData<'line'> = {
     labels: [],
     datasets: [
@@ -75,6 +86,35 @@ export class MonthlyEarningsChartComponent implements OnChanges {
       },
     },
   };
+
+  private updateChartOptions(isDark: boolean): void {
+    const textColor = isDark ? 'white' : 'gray';
+    const gridColor = isDark
+      ? 'rgba(255, 255, 255, 0.25)'
+      : 'rgba(211, 211, 211, 0.25)';
+
+    this.lineChartOptions = {
+      ...this.lineChartOptions,
+      scales: {
+        x: {
+          grid: {
+            color: gridColor,
+          },
+          ticks: {
+            color: textColor,
+          },
+        },
+        y: {
+          grid: {
+            color: gridColor,
+          },
+          ticks: {
+            color: textColor,
+          },
+        },
+      },
+    };
+  }
 
   ngOnChanges(): void {
     this.lineChartData = {

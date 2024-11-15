@@ -75,14 +75,14 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
             title="Gross Earnings"
             description="Quarterly earnings breakdown before taxes"
             [selectedYear]="selectedYear()"
-            textColor="text-emerald-600"
+            textColor="text-teal-600"
           ></app-quarterly-analysis>
           <app-quarterly-analysis
             [financialDataInput]="earningsAfterTaxes()"
             title="Net Earnings"
             description="Quarterly earnings breakdown after IVA"
             [selectedYear]="selectedYear()"
-            textColor="text-teal-600"
+            textColor="text-emerald-600"
           ></app-quarterly-analysis>
         </div>
       </article>

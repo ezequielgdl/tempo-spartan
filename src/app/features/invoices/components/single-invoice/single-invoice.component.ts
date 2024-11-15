@@ -1,10 +1,4 @@
-import {
-  Component,
-  signal,
-  inject,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { InvoicesServiceService } from '../../services/invoices-service.service';
 import { ClientService } from '../../../clients/services/clients.service';
@@ -18,6 +12,7 @@ import { UserInfo } from '../../../user/interface';
 import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { lucideSave } from '@ng-icons/lucide';
+import { NgxPrintModule } from 'ngx-print';
 
 @Component({
   selector: 'app-single-invoice',
@@ -28,18 +23,33 @@ import { lucideSave } from '@ng-icons/lucide';
     CommonModule,
     HlmButtonDirective,
     HlmIconComponent,
+    NgxPrintModule,
   ],
   providers: [provideIcons({ lucideSave })],
   template: `
     @defer (when invoice()) {
     <div class="flex justify-center m-4 print:hidden">
-      <button hlmBtn (click)="printInvoice()" class="flex items-center gap-2">
+      <button
+        hlmBtn
+        [printStyle]="{
+          '@page': {
+            size: 'A4',
+            margin: '15mm'
+          }
+        }"
+        [useExistingCss]="true"
+        [printTitle]="'Invoice ' + (invoice()?.invoiceNumber || '')"
+        [printSectionId]="printId"
+        ngxPrint
+        class="flex items-center gap-2"
+      >
         <hlm-icon name="lucideSave" size="sm" />
         Save as PDF
       </button>
     </div>
     <div
       #invoiceContainer
+      [id]="printId"
       class="max-w-4xl mx-auto bg-white p-8 shadow-lg print:shadow-none"
     >
       <!-- Header -->
@@ -170,7 +180,7 @@ export class SingleInvoiceComponent {
   user = signal<UserInfo | null>(null);
   client = signal<Client | null>(null);
 
-  @ViewChild('invoiceContainer') invoiceContainer!: ElementRef;
+  printId = 'invoicePrint';
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -186,40 +196,5 @@ export class SingleInvoiceComponent {
       });
     });
     this.userService.getUser().subscribe((user) => this.user.set(user));
-  }
-
-  printInvoice() {
-    const printContents = this.invoiceContainer.nativeElement;
-
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Invoice</title>
-          <link rel="stylesheet" href="${window.location.origin}/styles.css">
-          <style>
-            body { margin: 0; padding: 16px; }
-            @media print {
-              @page { margin: 0; }
-              body { margin: 16px; }
-            }
-          </style>
-        </head>
-        <body>
-          ${printContents.outerHTML}
-        </body>
-      </html>
-    `);
-
-    // Wait for styles to load
-    printWindow.document.close();
-    printWindow.onload = () => {
-      printWindow.print();
-      printWindow.onafterprint = () => {
-        printWindow.close();
-      };
-    };
   }
 }

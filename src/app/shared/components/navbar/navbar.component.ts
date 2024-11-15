@@ -57,7 +57,7 @@ import { User } from '@supabase/supabase-js';
     }),
   ],
   host: {
-    class: 'flex w-full items-center justify-between p-4',
+    class: 'flex w-full items-center justify-between px-5 py-2',
   },
   template: `
     <div

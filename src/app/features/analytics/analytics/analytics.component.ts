@@ -5,12 +5,14 @@ import {
   OnDestroy,
   computed,
   signal,
+  inject,
 } from '@angular/core';
 import { ClientService } from '../../clients/services/clients.service';
 import { InvoicesServiceService } from '../../invoices/services/invoices-service.service';
 import { QuarterlyAnalysisComponent } from '../components/quarterly-analysis/quarterly-analysis.component';
 import { EarningsChartComponent } from '../components/earnings-chart/earnings-chart.component';
 import { ClientEarningsComponent } from '../components/client-earnings/client-earnings.component';
+import { MonthlyEarningsChartComponent } from '../components/monthly-earnings-chart/monthly-earnings-chart.component';
 import { Client } from '../../clients/interface';
 import { Invoice } from '../../invoices/interface';
 import { Subject } from 'rxjs';
@@ -28,6 +30,7 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
     HlmSelectImports,
     EarningsChartComponent,
     ClientEarningsComponent,
+    MonthlyEarningsChartComponent,
   ],
   template: `
     <section class="grid grid-cols-1 gap-4 mx-4 mb-4">
@@ -52,30 +55,34 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
             </hlm-select-content>
           </brn-select>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <app-quarterly-analysis
             [financialDataInput]="ivaAmount()"
             title="IVA"
             description="Quarterly tax breakdown"
             [selectedYear]="selectedYear()"
+            textColor="text-rose-600"
           ></app-quarterly-analysis>
           <app-quarterly-analysis
             [financialDataInput]="irpfAmount()"
             title="IRPF"
             description="Quarterly tax breakdown"
             [selectedYear]="selectedYear()"
+            textColor="text-amber-600"
           ></app-quarterly-analysis>
           <app-quarterly-analysis
             [financialDataInput]="earningsBeforeTaxes()"
             title="Gross Earnings"
             description="Quarterly earnings breakdown before taxes"
             [selectedYear]="selectedYear()"
+            textColor="text-emerald-600"
           ></app-quarterly-analysis>
           <app-quarterly-analysis
             [financialDataInput]="earningsAfterTaxes()"
             title="Net Earnings"
             description="Quarterly earnings breakdown after IVA"
             [selectedYear]="selectedYear()"
+            textColor="text-teal-600"
           ></app-quarterly-analysis>
         </div>
       </article>
@@ -88,11 +95,17 @@ import { BrnSelectImports } from '@spartan-ng/ui-select-brain';
         <app-client-earnings
           [clientEarnings]="clientEarnings()"
         ></app-client-earnings>
+        <app-monthly-earnings-chart
+          [monthlyEarnings]="monthlyEarnings()"
+          [selectedYear]="selectedYear()"
+        ></app-monthly-earnings-chart>
       </article>
     </section>
   `,
 })
 export class AnalyticsComponent implements OnInit, OnDestroy {
+  invoicesService = inject(InvoicesServiceService);
+  clientsService = inject(ClientService);
   // Signals
   protected readonly invoices = signal<Invoice[]>([]);
   protected readonly clients = signal<Client[]>([]);
@@ -140,18 +153,40 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   });
 
   protected readonly clientEarnings = computed(() => {
-    // return a list of clients with their earnings for the selected year
-    return this.clients().map((client) => ({
-      client: client.name,
-      earnings: this.invoices()
+    const yearInvoices = this.invoices().filter(
+      (invoice) =>
+        new Date(invoice.issueDate).getFullYear() ===
+        Number(this.selectedYear())
+    );
+
+    const activeClientIds = [
+      ...new Set(yearInvoices.map((invoice) => invoice.clientId)),
+    ];
+
+    return this.clients()
+      .filter((client) => activeClientIds.includes(client.id))
+      .map((client) => ({
+        client: client.name,
+        earnings: yearInvoices
+          .filter((invoice) => invoice.clientId === client.id)
+          .reduce((acc, invoice) => acc + invoice.total, 0),
+      }));
+  });
+
+  protected readonly monthlyEarnings = computed(() => {
+    const yearInvoices = this.invoices().filter(
+      (invoice) =>
+        new Date(invoice.issueDate).getFullYear() ===
+        Number(this.selectedYear())
+    );
+    const months = Array.from({ length: 12 }, (_, i) => i + 1);
+    return months.map((month) => {
+      return yearInvoices
         .filter(
-          (invoice) =>
-            new Date(invoice.issueDate).getFullYear() ===
-            Number(this.selectedYear())
+          (invoice) => new Date(invoice.issueDate).getMonth() + 1 === month
         )
-        .filter((invoice) => invoice.clientId === client.id)
-        .reduce((acc, invoice) => acc + invoice.total, 0),
-    }));
+        .reduce((acc, invoice) => acc + invoice.total - invoice.ivaAmount, 0);
+    });
   });
 
   protected readonly years = computed(() => {
@@ -168,11 +203,6 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   }
 
   private readonly destroy$ = new Subject<void>();
-
-  constructor(
-    private readonly invoicesService: InvoicesServiceService,
-    private readonly clientsService: ClientService
-  ) {}
 
   ngOnInit(): void {
     this.invoicesService.invoices$

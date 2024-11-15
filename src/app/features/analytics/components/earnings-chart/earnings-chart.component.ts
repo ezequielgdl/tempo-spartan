@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, computed, Input, OnChanges } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
@@ -24,14 +24,14 @@ import {
     BaseChartDirective,
   ],
   template: `
-    <section hlmCard>
+    <section hlmCard class="h-full flex flex-col">
       <div hlmCardHeader>
         <h3 hlmCardTitle class="text-sm lg:text-md">Net Earnings</h3>
         <p hlmCardDescription class="text-xs">Over the years</p>
       </div>
-      <p hlmCardContent>
+      <p hlmCardContent class="flex flex-grow items-center justify-center">
         <canvas
-          class="bg-white p-4 rounded-lg"
+          class="bg-white p-4 rounded-lg h-full w-full"
           baseChart
           [data]="barChartData"
           [options]="barChartOptions"
@@ -73,5 +73,6 @@ export class EarningsChartComponent implements OnChanges {
         display: false,
       },
     },
+    indexAxis: 'y',
   };
 }

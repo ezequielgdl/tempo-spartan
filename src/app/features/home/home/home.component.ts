@@ -12,7 +12,7 @@ import { NgClass } from '@angular/common';
   imports: [ClockComponent, NgClass],
   template: `
     <h1
-      class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-10xl 
+      class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl
      font-pp-pangaia text-center cursor-default"
     >
       @for (char of hero; track char) {
@@ -38,11 +38,11 @@ import { NgClass } from '@angular/common';
       }
     </h1>
     <span
-      class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-sans pt-0 md:pt-4
+      class="text-4xl lg:text-5xl font-sans pt-0 md:pt-4
       "
     >
       Manage your
-      <div class="h-[1em] relative">
+      <div class="h-[1em] relative md:text-left text-center">
         @for (title of currentTitle(); track title) {
         <span class="inline-block animate-slideUp">
           {{ title }}

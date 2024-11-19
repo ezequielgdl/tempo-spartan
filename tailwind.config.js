@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        "pp-pangaia": ["Pp Pangaia"],
+        "pp-pangaia": ["PP Pangaia"],
         "dm-sans": ["DM Sans"],
       },
       animation: {

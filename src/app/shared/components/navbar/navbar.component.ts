@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { ThemeService } from '../../../core/theme/theme.service';
@@ -27,6 +27,7 @@ import {
 } from '@spartan-ng/ui-menu-helm';
 import { UserInfo } from '../../../features/user/interface';
 import { User } from '@supabase/supabase-js';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
@@ -45,6 +46,7 @@ import { User } from '@supabase/supabase-js';
     HlmButtonDirective,
     HlmIconComponent,
     RouterLink,
+    NgClass,
   ],
   providers: [
     provideIcons({
@@ -61,9 +63,11 @@ import { User } from '@supabase/supabase-js';
   },
   template: `
     <div
-      class="font-pp-pangaia font-bold text-xl"
+      class="font-pp-pangaia font-bold text-xl cursor-pointer"
       id="tempo-logo"
       aria-label="Tempo logo"
+      [ngClass]="{ invisible: router.url === '/home' }"
+      [routerLink]="'/home'"
     >
       Tempo
     </div>
@@ -165,17 +169,19 @@ import { User } from '@supabase/supabase-js';
         </hlm-menu>
       </ng-template>
     </div>
+    } @else {
+    <button hlmBtn routerLink="/enter">Login</button>
     }
   `,
 })
 export class NavbarComponent {
   constructor(
     private authService: AuthService,
-    private themeService: ThemeService,
-    private router: Router
+    private themeService: ThemeService
   ) {}
 
   currentUser: User | null = null;
+  router = inject(Router);
 
   ngOnInit() {
     this.authService.getCurrentUser().subscribe((user) => {

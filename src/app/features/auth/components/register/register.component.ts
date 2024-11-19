@@ -103,7 +103,10 @@ export class RegisterComponent {
   registerForm = new FormGroup(
     {
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+      ]),
       confirmPassword: new FormControl('', [Validators.required]),
     },
     { validators: this.passwordsMatchValidator.bind(this) }
@@ -129,8 +132,8 @@ export class RegisterComponent {
               this.errorMessage = 'Email o contraseña incorrectos';
             }
           },
-          error: () => {
-            this.errorMessage = 'El email o la contraseña son incorrectos';
+          error: (error) => {
+            this.errorMessage = error;
           },
         });
       }

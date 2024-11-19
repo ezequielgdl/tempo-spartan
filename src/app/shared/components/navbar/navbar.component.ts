@@ -192,7 +192,7 @@ export class NavbarComponent {
     this.subscriptions.push(
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
-          this.showHero = event.url !== '/home';
+          this.showHero = event.url !== '/home' && event.url !== '/';
         }
       })
     );

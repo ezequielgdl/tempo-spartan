@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { provideIcons } from '@ng-icons/core';
@@ -28,6 +28,7 @@ import {
 import { UserInfo } from '../../../features/user/interface';
 import { User } from '@supabase/supabase-js';
 import { NgClass } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -66,10 +67,9 @@ import { NgClass } from '@angular/common';
       class="font-pp-pangaia font-bold text-xl cursor-pointer"
       id="tempo-logo"
       aria-label="Tempo logo"
-      [ngClass]="{ invisible: router.url === '/home' }"
       [routerLink]="'/home'"
     >
-      Tempo
+      @if (showHero) { Tempo }
     </div>
     @if (currentUser) {
     <div>
@@ -175,18 +175,27 @@ import { NgClass } from '@angular/common';
   `,
 })
 export class NavbarComponent {
-  constructor(
-    private authService: AuthService,
-    private themeService: ThemeService
-  ) {}
-
+  private subscriptions: Subscription[] = [];
+  private authService = inject(AuthService);
+  private themeService = inject(ThemeService);
   currentUser: User | null = null;
-  router = inject(Router);
+  private router = inject(Router);
+  showHero = false;
 
   ngOnInit() {
-    this.authService.getCurrentUser().subscribe((user) => {
-      this.currentUser = user as User | null;
-    });
+    this.subscriptions.push(
+      this.authService.getCurrentUser().subscribe((user) => {
+        this.currentUser = user as User | null;
+      })
+    );
+
+    this.subscriptions.push(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.showHero = event.url !== '/home';
+        }
+      })
+    );
   }
 
   logout() {
@@ -197,5 +206,9 @@ export class NavbarComponent {
 
   toggleTheme() {
     this.themeService.toggleDarkMode();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

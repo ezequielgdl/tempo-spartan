@@ -5,12 +5,15 @@ import { NgClass } from '@angular/common';
 @Component({
   selector: 'app-home',
   standalone: true,
+  host: {
+    class:
+      'flex md:flex-row flex-col items-center justify-center gap-12 h-[calc(100vh-10em)]',
+  },
   imports: [ClockComponent, NgClass],
   template: `
     <h1
-      class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl 
-     font-pp-pangaia text-center cursor-default
-      xl:absolute xl:-translate-x-1/2 xl:-translate-y-2/3 xl:left-1/4 xl:top-1/2"
+      class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-10xl 
+     font-pp-pangaia text-center cursor-default"
     >
       @for (char of hero; track char) {
       <span
@@ -35,11 +38,11 @@ import { NgClass } from '@angular/common';
       }
     </h1>
     <span
-      class="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-sans
-      xl:absolute xl:-translate-x-1/2 xl:-translate-y-1/2 xl:top-1/2 xl:left-3/4"
+      class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-sans pt-0 md:pt-4
+      "
     >
-      Manage your <br />
-      <div class="h-[1.5em] relative">
+      Manage your
+      <div class="h-[1em] relative">
         @for (title of currentTitle(); track title) {
         <span class="inline-block animate-slideUp">
           {{ title }}

@@ -1,9 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { EditDialogComponent } from '../../../../shared/ui/edit-dialog/edit-dialog.component';
 import { Client } from '../../interface';
 import { ClientService } from '../../services/clients.service';
 import { provideIcons } from '@ng-icons/core';
 import { lucideEdit } from '@ng-icons/lucide';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-edit-clients',
@@ -12,7 +18,7 @@ import { lucideEdit } from '@ng-icons/lucide';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideIcons({ lucideEdit })],
   template: `
-    <app-edit-dialog 
+    <app-edit-dialog
       buttonText="Edit"
       title="Edit Client"
       description="Edit the client details here."
@@ -20,11 +26,12 @@ import { lucideEdit } from '@ng-icons/lucide';
       saveButtonText="Save Changes"
       (save)="onSave($event)"
     />
-  `
+  `,
 })
 export class EditClientsComponent implements OnInit {
   @Input() client!: Client;
-  fields: Array<{id: string, label: string, value: string | number}> = [];
+  fields: Array<{ id: string; label: string; value: string | number }> = [];
+  private readonly destroy$ = new Subject<void>();
 
   constructor(private clientService: ClientService) {}
 
@@ -40,21 +47,33 @@ export class EditClientsComponent implements OnInit {
         { id: 'email', label: 'Email', value: this.client.email ?? '' },
         { id: 'address', label: 'Address', value: this.client.address ?? '' },
         { id: 'CIF', label: 'CIF', value: this.client.CIF ?? '' },
-        { id: 'pricePerHour', label: 'Price per hour', value: this.client.pricePerHour?.toString() ?? '' },
+        {
+          id: 'pricePerHour',
+          label: 'Price per hour',
+          value: this.client.pricePerHour?.toString() ?? '',
+        },
       ];
     } else {
       console.error('Client object is undefined');
     }
   }
 
-  onSave(data: {[key: string]: string | number}): void {
-    this.clientService.updateClient(this.client.id, data).subscribe({
-      next: (updatedClient) => {
-        if (updatedClient) {
-          this.client = updatedClient;
-        }
-      },
-      error: (error) => console.error('Error updating client:', error)
-    });
+  onSave(data: { [key: string]: string | number }): void {
+    this.clientService
+      .updateClient(this.client.id, data)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (updatedClient) => {
+          if (updatedClient) {
+            this.client = updatedClient;
+          }
+        },
+        error: (error) => console.error('Error updating client:', error),
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

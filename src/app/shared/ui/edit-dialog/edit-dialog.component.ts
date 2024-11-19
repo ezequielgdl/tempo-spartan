@@ -1,7 +1,24 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidatorFn,
+} from '@angular/forms';
 import { HlmButtonDirective } from '@spartan-ng/ui-button-helm';
-import { BrnDialogContentDirective, BrnDialogCloseDirective, BrnDialogTriggerDirective } from '@spartan-ng/ui-dialog-brain';
+import {
+  BrnDialogContentDirective,
+  BrnDialogCloseDirective,
+  BrnDialogTriggerDirective,
+} from '@spartan-ng/ui-dialog-brain';
 import {
   HlmDialogComponent,
   HlmDialogContentComponent,
@@ -35,7 +52,9 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
   ],
   template: `
     <hlm-dialog>
-      <button id="edit-profile-button" brnDialogTrigger hlmBtn>{{ buttonText }}</button>
+      <button id="edit-profile-button" brnDialogTrigger hlmBtn>
+        {{ buttonText }}
+      </button>
       <hlm-dialog-content class="sm:max-w-[425px]" *brnDialogContent="let ctx">
         <hlm-dialog-header>
           <h3 id="dialog-title" hlmDialogTitle>{{ title }}</h3>
@@ -44,40 +63,66 @@ import { HlmLabelDirective } from '@spartan-ng/ui-label-helm';
         <form [formGroup]="form" (ngSubmit)="onSave()">
           <div class="py-4 grid gap-4">
             @for (field of fields; track field.id) {
-              <div class="items-center grid grid-cols-4 gap-4">
-                <label [id]="'label-' + field.id" hlmLabel [for]="field.id" class="text-right">{{ field.label }}</label>
-                <input [id]="'input-' + field.id" hlmInput [formControlName]="field.id" class="col-span-3" />
-              </div>
+            <div class="items-center grid grid-cols-4 gap-4">
+              <label
+                [id]="'label-' + field.id"
+                hlmLabel
+                [for]="field.id"
+                class="text-right"
+                >{{ field.label }}</label
+              >
+              <input
+                [id]="'input-' + field.id"
+                hlmInput
+                [formControlName]="field.id"
+                class="col-span-3"
+              />
+            </div>
             }
           </div>
           <hlm-dialog-footer>
-            <button id="save-button" hlmBtn type="submit" brnDialogClose [disabled]="form.invalid">{{ saveButtonText }}</button>
+            <button
+              id="save-button"
+              hlmBtn
+              type="submit"
+              brnDialogClose
+              [disabled]="form.invalid"
+            >
+              {{ saveButtonText }}
+            </button>
           </hlm-dialog-footer>
         </form>
       </hlm-dialog-content>
     </hlm-dialog>
   `,
 })
-export class EditDialogComponent implements OnInit {
+export class EditDialogComponent implements OnChanges {
   @Input() buttonText: string = 'Edit Profile';
   @Input() title: string = 'Edit profile';
-  @Input() description: string = 'Make changes to your profile here. Click save when you\'re done.';
+  @Input() description: string =
+    "Make changes to your profile here. Click save when you're done.";
   @Input() fields: Array<{
-    id: string, 
-    label: string, 
-    value: string | number,
-    validators?: ValidatorFn | ValidatorFn[]
-  }> = [{id: 'name', label: 'Name', value: ''}];
+    id: string;
+    label: string;
+    value: string | number;
+    validators?: ValidatorFn | ValidatorFn[];
+  }> = [{ id: 'name', label: 'Name', value: '' }];
   @Input() saveButtonText: string = 'Save changes';
-  @Output() save = new EventEmitter<{[key: string]: string | number}>();
+  @Output() save = new EventEmitter<{ [key: string]: string | number }>();
 
   form!: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
-    const formControls: {[key: string]: any} = {};
-    this.fields.forEach(field => {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['fields'] && changes['fields'].currentValue) {
+      this.initializeForm();
+    }
+  }
+
+  initializeForm() {
+    const formControls: { [key: string]: any } = {};
+    this.fields.forEach((field) => {
       formControls[field.id] = [field.value, field.validators];
     });
     this.form = this.fb.group(formControls);

@@ -29,6 +29,7 @@ import { UserInfo } from '../../../features/user/interface';
 import { User } from '@supabase/supabase-js';
 import { NgClass } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { UserService } from '../../../features/user/services/user.service';
 
 @Component({
   selector: 'app-navbar',
@@ -64,7 +65,7 @@ import { Subscription } from 'rxjs';
   },
   template: `
     <div
-      class="font-pp-pangaia font-bold text-xl cursor-pointer"
+      class="font-pp-pangaia text-xl cursor-pointer"
       id="tempo-logo"
       aria-label="Tempo logo"
       [routerLink]="'/home'"
@@ -178,6 +179,7 @@ export class NavbarComponent {
   private subscriptions: Subscription[] = [];
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
+  private userService = inject(UserService);
   currentUser: User | null = null;
   private router = inject(Router);
   showHero = false;
@@ -202,6 +204,7 @@ export class NavbarComponent {
     this.authService.logout().subscribe(() => {
       this.router.navigate(['/']);
     });
+    this.userService.clearUser();
   }
 
   toggleTheme() {

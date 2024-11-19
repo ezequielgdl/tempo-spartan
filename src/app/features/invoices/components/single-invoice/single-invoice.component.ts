@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { lucideSave } from '@ng-icons/lucide';
 import { NgxPrintModule } from 'ngx-print';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-single-invoice',
@@ -175,6 +176,7 @@ export class SingleInvoiceComponent {
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
   private clientService = inject(ClientService);
+  private readonly destroy$ = new Subject<void>();
 
   invoice = signal<Invoice | null>(null);
   user = signal<UserInfo | null>(null);
@@ -183,7 +185,7 @@ export class SingleInvoiceComponent {
   printId = 'invoicePrint';
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const id = params['id'];
       this.invoicesService.getInvoiceById(id).subscribe({
         next: (invoice) => {
@@ -195,6 +197,14 @@ export class SingleInvoiceComponent {
         error: (error) => console.error('Error fetching invoice:', error),
       });
     });
-    this.userService.getUser().subscribe((user) => this.user.set(user));
+    this.userService
+      .getUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user) => this.user.set(user));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

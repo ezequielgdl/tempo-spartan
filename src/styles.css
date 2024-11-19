@@ -1,11 +1,18 @@
 @import "@angular/cdk/overlay-prebuilt.css";
 @import url("https://fonts.cdnfonts.com/css/dm-sans");
-@import url("https://fonts.cdnfonts.com/css/pp-pangaia");
 
 /* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "PP Pangaia";
+  src: url("/assets/pp-pangaia-cdnfonts/PPPangaia-Medium-BF654c530cc86d5.otf")
+    format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
 
 :root {
   --font-sans: "DM Sans", "ui-sans-serif", system-ui, -apple-system,

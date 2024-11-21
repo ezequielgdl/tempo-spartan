@@ -104,16 +104,33 @@ export class UserService {
       switchMap(({ data: { user } }) => {
         if (!user) return of(null);
 
-        return this.supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle()
-          .then(({ data }) => data);
+        return from(
+          this.supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle()
+        ).pipe(
+          switchMap(({ data }) => {
+            if (data) return of(data);
+
+            // Create empty user if none exists
+            const emptyUser: UserInfo = {
+              id: user.id,
+              name: '',
+              nif: '',
+              address: '',
+              phone: '',
+              iban: '',
+              website: '',
+            };
+            return this.createUser(emptyUser);
+          })
+        );
       }),
       tap((user) => this.userSubject.next(user)),
       catchError((error) => {
-        console.error('Error fetching user:', error);
+        console.error('Error fetching/creating user:', error);
         return of(null);
       })
     );

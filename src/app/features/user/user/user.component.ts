@@ -22,8 +22,8 @@ import {
 import { hlmMuted } from '@spartan-ng/ui-typography-helm';
 import { HlmSpinnerComponent } from '@spartan-ng/ui-spinner-helm';
 import { UserService } from '../services/user.service';
-import { Subject, combineLatest } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, combineLatest, of } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 @Component({
   selector: 'app-user',
   standalone: true,
@@ -46,10 +46,16 @@ import { takeUntil } from 'rxjs/operators';
   },
   template: `
     <section hlmCard>
-      @defer { @if (user()) {
+      @defer {
       <div hlmCardHeader>
         <h3 hlmCardTitle>Hi, {{ name() }}</h3>
-        <p hlmCardDescription>Your profile details</p>
+        <p hlmCardDescription>
+          {{
+            user()?.name
+              ? 'Your profile details'
+              : 'Complete your profile details'
+          }}
+        </p>
       </div>
       <div hlmCardContent class="flex flex-col gap-8 mb-4">
         <div>
@@ -78,15 +84,15 @@ import { takeUntil } from 'rxjs/operators';
           <p class="">{{ user()?.website }}</p>
         </div>
       </div>
-      } } @loading {
+      } @loading {
       <div class="flex justify-center items-center h-full p-4">
         <hlm-spinner />
       </div>
       }
       <p hlmCardFooter>
-        @defer { @if (user()) {
+        @defer {
         <app-edit-user [user]="user()!"></app-edit-user>
-        } } @placeholder {
+        } @placeholder {
         <button hlmBtn>Loading...</button>
         }
       </p>
@@ -103,33 +109,33 @@ export class UserComponent {
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    combineLatest([
-      this.authService.getCurrentUser(),
-      this.userService.getUser(),
-    ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([authUser, userData]) => {
-        if (!authUser) {
-          this.user.set(null);
-          this.userId.set(null);
-          return;
-        }
+    this.authService.currentUser$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((user) => {
+          this.userId.set(user?.id ?? null);
+          if (!user?.id) return of(null);
 
-        if (userData) {
-          this.user.set(userData);
-          this.userId.set(userData.id);
-        } else {
-          this.userId.set(authUser.id);
-          this.user.set({
-            id: authUser.id,
-            name: '',
-            nif: '',
-            address: '',
-            phone: '',
-            iban: '',
-            website: '',
-          });
-        }
+          return this.userService.getUser().pipe(
+            switchMap((existingUser) => {
+              if (existingUser) return of(existingUser);
+
+              const userData: UserInfo = {
+                id: user.id,
+                name: '',
+                nif: '',
+                address: '',
+                phone: '',
+                iban: '',
+                website: '',
+              };
+              return this.userService.createUser(userData);
+            })
+          );
+        })
+      )
+      .subscribe((user) => {
+        if (user) this.user.set(user);
       });
   }
 
